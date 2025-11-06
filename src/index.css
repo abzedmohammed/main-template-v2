@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+* {
+  font-family: "Inter", sans-serif !important;
+}
+
+html,
+body {
+  height: 100%;
+  background: #F4F3F3 !important;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+button{
+  cursor: pointer;
+}
+
+h1, h2, h3 {
+  font-family: "Poppins", sans-serif !important;
+}

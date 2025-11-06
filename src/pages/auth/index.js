@@ -1,0 +1,9 @@
+export { default as Register } from './Register';
+export { default as RegisterOptions } from './RegisterOptions';
+export { default as Login } from './Login';
+export { default as LoginOTPVerification } from './LoginOTPVerification';
+export { default as ForgotPassword } from './ForgotPassword';
+export { default as ForgotPasswordVerification } from './ForgotPasswordVerification';
+export { default as UpdatePassword } from './UpdatePassword';
+export { default as RegistrationVerification } from './RegistrationVerification';
+export { default as RegistrationVerificationEmail } from './RegistrationVerificationEmail'; 
