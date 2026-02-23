@@ -1,4 +1,4 @@
-import { DynamicBtn, TextDynamic } from "abzed-utils";
+import { DynamicBtn, TextDynamic } from 'abzed-utils';
 
 export default function PageHeader({
     icon,
@@ -25,27 +25,26 @@ export default function PageHeader({
 
                             <TextDynamic
                                 text={header}
-                                className={"txt_h2"}
+                                className={'txt_1_5_semi'}
                                 tagName="h1"
                             />
                         </button>
                     ) : (
                         <TextDynamic
                             text={header}
-                            className={"txt_h2"}
+                            className={'txt_1_5_semi'}
                             tagName="h1"
                         />
                     )}
 
-                    <TextDynamic
-                        text={body}
-                        className={"txt_75 text-[#545454]"}
-                    />
+                    <TextDynamic text={body} className={'txt_75 text-[#545454]'} />
                 </div>
             </div>
 
             {showBtn && (
-                <DynamicBtn {...btnProps} handleClick={btnFn} text={btnText} />
+                <DynamicBtn {...btnProps} onClick={btnFn}>
+                    {btnText}
+                </DynamicBtn>
             )}
         </div>
     );

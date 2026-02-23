@@ -6,4 +6,4 @@ export { default as ForgotPassword } from './ForgotPassword';
 export { default as ForgotPasswordVerification } from './ForgotPasswordVerification';
 export { default as UpdatePassword } from './UpdatePassword';
 export { default as RegistrationVerification } from './RegistrationVerification';
-export { default as RegistrationVerificationEmail } from './RegistrationVerificationEmail'; 
+export { default as RegistrationVerificationEmail } from './RegistrationVerificationEmail';

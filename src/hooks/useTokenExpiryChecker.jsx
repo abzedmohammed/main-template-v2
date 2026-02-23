@@ -1,89 +1,94 @@
-// hooks/useTokenExpiryChecker.js
-import { useEffect, useState } from "react";
-import { Modal } from "antd";
-import { logoutUrl, notifyError } from "../utils";
-import { jwtDecode } from "jwt-decode";
-import { useDispatch, useSelector } from "react-redux";
-import { logoutStateFn } from "../features/auth/authSlice";
-import { useDynamicMutation } from "abzed-utils";
-import { adminRefreshToken } from "../actions/adminActions";
+import { useCallback, useEffect, useState } from 'react';
+import { Modal } from 'antd';
+import { logoutUrl, notifyError } from '../utils';
+import { jwtDecode } from 'jwt-decode';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutStateFn } from '../features/auth/authSlice';
+import { useDynamicMutation } from 'abzed-utils';
+import { adminRefreshToken } from '../actions/adminActions';
 
-let externalShowModal = null;
-
-export const showTokenExpiryModal = () => {
-    if (externalShowModal) externalShowModal(true);
-};
+const PROMPT_BEFORE_EXPIRY_SECONDS = 60;
 
 export function useTokenExpiryChecker() {
     const dispatch = useDispatch();
 
-    const { initLoading } = useSelector((state) => state.global);
-    const { token } = useSelector((state) => state.auth);
+    const { isActive } = useSelector((state) => state.auth);
 
     const [isModalVisible, setIsModalVisible] = useState(false);
 
+    const handleRedirect = useCallback(() => {
+        localStorage.removeItem('token');
+        dispatch(logoutStateFn());
+        window.location.assign(logoutUrl);
+    }, [dispatch]);
+
     const refreshMutation = useDynamicMutation({
         mutationFn: adminRefreshToken.mutationFn,
-        onError: () => {
-            notifyError("A new session is required. You are being redirected to login.");
+        onError: (message) => {
+            if (message) {
+                notifyError(message);
+            }
+            notifyError('A new session is required. You are being redirected to login.');
             handleRedirect();
         },
-        onSuccess: () => {
+        onSuccess: ({ response }) => {
+            const refreshedToken = response?.token || response?.data?.token;
+            if (refreshedToken) {
+                localStorage.setItem('token', refreshedToken);
+            }
+
             setIsModalVisible(false);
         },
     });
 
     useEffect(() => {
-        externalShowModal = setIsModalVisible;
-        return () => {
-            externalShowModal = null;
-        };
-    }, []);
-
-    useEffect(() => {
-        if (initLoading) {
-            setIsModalVisible(false);
-            return;
+        if (!isActive) {
+            return undefined;
         }
 
         let timeoutId;
-
-        if (!token) {
+        const openModal = (delay = 0) => {
             timeoutId = setTimeout(() => {
-                // setIsModalVisible(true);
-            }, 2000);
+                setIsModalVisible(true);
+            }, delay);
+        };
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            openModal();
             return () => clearTimeout(timeoutId);
         }
 
-        const checkToken = () => {
+        const scheduleTokenCheck = () => {
             try {
                 const decoded = jwtDecode(token);
-                const currentTime = Math.floor(Date.now() / 1000);
 
-                if (decoded.exp < currentTime) {
-                    // setIsModalVisible(true);
-                } else {
-                    const timeLeft = decoded.exp - currentTime;
-                    timeoutId = setTimeout(
-                        checkToken,
-                        Math.max(timeLeft - 60, 1) * 1000
-                    );
+                if (!decoded?.exp) {
+                    openModal();
+                    return;
                 }
-            } catch (error) {
-                console.error("Token decode error:", error);
-                // setIsModalVisible(true);
+
+                const currentTime = Math.floor(Date.now() / 1000);
+                const timeLeft = decoded.exp - currentTime;
+
+                if (timeLeft <= 0) {
+                    openModal();
+                } else {
+                    const timeBeforePrompt = Math.max(
+                        timeLeft - PROMPT_BEFORE_EXPIRY_SECONDS,
+                        1
+                    );
+                    openModal(timeBeforePrompt * 1000);
+                }
+            } catch {
+                openModal();
             }
         };
 
-        checkToken();
+        scheduleTokenCheck();
 
         return () => clearTimeout(timeoutId);
-    }, [initLoading, token]);
-
-    const handleRedirect = () => {
-        dispatch(logoutStateFn());
-        window.location.href = logoutUrl;
-    };
+    }, [isActive]);
 
     const handleRefresh = () => {
         refreshMutation.mutate({});
@@ -99,10 +104,10 @@ export function useTokenExpiryChecker() {
             cancelText="Logout"
             okText="Keep me logged in"
             okButtonProps={{
-                className: "secondary_btn",
+                className: 'secondary_btn',
             }}
             cancelButtonProps={{
-                className: "cancel_btn",
+                className: 'cancel_btn',
             }}
             onCancel={handleRedirect}
             onOk={handleRefresh}

@@ -1,88 +1,91 @@
-import axiosInstance from "../instance";
-import { authStateFn, userIdStateFn } from "../features/auth/authSlice";
-import { notifyError, notifySuccess } from "../utils";
-import { jwtDecode } from "jwt-decode";
+import axiosInstance from '../instance';
+import { authStateFn, userIdStateFn } from '../features/auth/authSlice';
+import { notifyError, notifySuccess } from '../utils';
+import { jwtDecode } from 'jwt-decode';
+import { ROUTES } from '../routes';
 
-const handleLoginSuccess = ({ token, dispatch, successMessage }) => {
+const handleLoginSuccess = ({ token, dispatch, navigate, successMessage }) => {
     if (token) {
-        localStorage.setItem("token", token);
+        localStorage.setItem('token', token);
         const decoded = jwtDecode(token);
-        decoded.role = "ADMIN";
+        decoded.role = decoded?.role || 'ADMIN';
+
         notifySuccess(successMessage);
         dispatch(authStateFn(decoded));
-        setTimeout(() => {
-            window.location.replace(`/#/dashboard`);
-        }, 50);
+
+        if (navigate) {
+            navigate(ROUTES.DASHBOARD, { replace: true });
+            return;
+        }
+
+        window.location.replace(`/#${ROUTES.DASHBOARD}`);
     } else {
-        notifyError("Could not verify account");
+        notifyError('Could not verify account');
     }
 };
 
 export const loginAction = {
-    mutationFn: async (data) => await axiosInstance.post("/auth/sign_in", data),
+    mutationFn: async (data) => axiosInstance.post('/auth/sign_in', data),
     onSuccess: ({ response, navigate, dispatch }) => {
-        notifySuccess("Please verify your account");
+        notifySuccess('Please verify your account');
         dispatch(userIdStateFn(response?.data?.usrId));
-        navigate("/auth/login/verification");
+        navigate(ROUTES.AUTH.LOGIN_OTP_VERIFICATION);
     },
 };
 
 export const registerAction = {
-    mutationFn: async (data) => await axiosInstance.post("/auth/sign_up", data),
+    mutationFn: async (data) => axiosInstance.post('/auth/sign_up', data),
     onSuccess: ({ response, dispatch, navigate, form }) => {
-        notifySuccess(
-            "Registration successful.Please verify your phone number"
-        );
+        notifySuccess('Registration successful. Please verify your phone number');
         dispatch(userIdStateFn(response?.data?.usrId));
         form?.resetFields();
-        navigate("/auth/registration/verification");
+        navigate(ROUTES.AUTH.REGISTRATION_VERIFICATION);
     },
 };
 
 export const accountVerification = {
-    mutationFn: async (data) =>
-        await axiosInstance.post("/auth/sign_in_otp", data),
-    onSuccess: ({ response, dispatch }) => {
-        let token = response?.token;
+    mutationFn: async (data) => axiosInstance.post('/auth/sign_in_otp', data),
+    onSuccess: ({ response, dispatch, navigate }) => {
+        const token = response?.token || response?.data?.token;
         handleLoginSuccess({
             token,
             dispatch,
-            successMessage: "Account verification successful",
+            navigate,
+            successMessage: 'Account verification successful',
         });
     },
 };
 
 export const accountResendOtp = {
-    mutationFn: async (body) =>
-        await axiosInstance.post("/auth/resend_otp", body),
+    mutationFn: async (body) => axiosInstance.post('/auth/resend_otp', body),
 };
 
 export const forgotPasswordAction = {
-    mutationFn: async (data) =>
-        await axiosInstance.post("/auth/reset_password", data),
+    mutationFn: async (data) => axiosInstance.post('/auth/reset_password', data),
     onSuccess: ({ response, dispatch, navigate }) => {
-        console.log(response);
         dispatch(userIdStateFn(response?.data?.usrId));
-        notifySuccess("OTP sent successfully");
-        navigate("/auth/forgot-password/verification");
+        notifySuccess('OTP sent successfully');
+        navigate(ROUTES.AUTH.FORGOT_PASSWORD_VERIFICATION);
     },
 };
 
 export const forgotPasswordVerificationAction = {
-    mutationFn: async (data) =>
-        await axiosInstance.post("/auth/sign_in_otp", data),
+    mutationFn: async (data) => axiosInstance.post('/auth/sign_in_otp', data),
     onSuccess: ({ response, navigate }) => {
-        console.log(response);
-        notifySuccess("Account verification successful");
-        navigate("/auth/update-password");
+        if (!response) {
+            notifyError('Could not verify account');
+            return;
+        }
+
+        notifySuccess('Verification successful');
+        navigate(ROUTES.AUTH.UPDATE_PASSWORD);
     },
 };
 
 export const updatePasswordAction = {
-    mutationFn: async (data) =>
-        await axiosInstance.post("/auth/update_password", data),
+    mutationFn: async (data) => axiosInstance.post('/auth/update_password', data),
     onSuccess: ({ navigate }) => {
-        notifySuccess("Password updated successfully");
-        navigate("/auth/login");
+        notifySuccess('Password updated successfully');
+        navigate(ROUTES.AUTH.LOGIN);
     },
 };

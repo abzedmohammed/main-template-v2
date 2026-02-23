@@ -1,84 +1,38 @@
 import { Form } from 'antd';
-import { useEffect, useState } from 'react';
-import { defaultTimer, notifyError, notifySuccess } from '../../utils';
-import { accountResendOtp, accountVerification } from '../../actions/authActions';
-import { useDynamicMutation } from "abzed-utils";
-import { useSelector } from 'react-redux';
+import { Navigate } from 'react-router-dom';
+import { ROUTES } from '../../routes';
+import { accountVerification } from '../../actions/authActions';
 import { AuthLogoComponent, OTPFormComponent } from './auth_components';
+import { useOtpVerificationFlow } from './hooks/useOtpVerificationFlow';
 
 export default function RegistrationVerification() {
-	const [form] = Form.useForm();
+    const [form] = Form.useForm();
 
-	const { userId } = useSelector((state) => state.auth);
+    const { userId, timer, setOtp, handleResendOtp, handleVerifyOtp, isProcessing } =
+        useOtpVerificationFlow({
+            verifyAction: accountVerification,
+        });
 
-	const [timer, setTimer] = useState(defaultTimer);
-	const [otp, setotp] = useState('');
+    if (!userId) {
+        return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
+    }
 
-	const requestMutation = useDynamicMutation({
-		mutationFn: accountVerification.mutationFn,
-		onError: notifyError,
-		onSuccess: notifySuccess,
-	});
-
-	const mutationAlt = useDynamicMutation({
-		mutationFn: accountResendOtp.mutationFn,
-		onSuccess: () => {
-			setTimer(defaultTimer);
-			notifySuccess('OTP sent successfully');
-		},
-		onError: notifyError,
-	});
-
-	const handleResendOtp = () => {
-		mutationAlt.mutate({
-			usrId: userId,
-		});
-	};
-
-	async function onFinish() {
-		requestMutation.mutate({
-			usrId: userId,
-			usrOTP: otp,
-		});
-	}
-
-	useEffect(() => {
-		let interval = null;
-
-		if (timer > 0) {
-			interval = setInterval(() => {
-				setTimer((prev) => prev - 1);
-			}, 1000);
-		} else {
-			clearInterval(interval);
-		}
-
-		return () => clearInterval(interval);
-	}, [timer]);
-
-	// if (!userId) return <Navigate to={'/auth/login'} />;
-
-	return (
-		<div className="auth_main_alt">
+    return (
+        <div className="auth_main_alt">
             <div className="auth_main_alt_component">
-                <AuthLogoComponent
-                    component={
-                        <OTPFormComponent
-                            form={form}
-                            setotp={setotp}
-                            onFinish={onFinish}
-                            isProcessing={
-                                requestMutation.isPending ||
-                                mutationAlt.isPending
-                            }
-                            handleResendOtp={handleResendOtp}
-                            timer={timer}
-							otpText='Enter the code sent to your phone number'
-							verificationText='Verify Phone Number'
-                        />
-                    }
-                />
+                <AuthLogoComponent>
+                    <OTPFormComponent
+                        form={form}
+                        setOtp={setOtp}
+                        onFinish={handleVerifyOtp}
+                        isProcessing={isProcessing}
+                        handleResendOtp={handleResendOtp}
+                        timer={timer}
+                        otpText="Enter the code sent to your phone number"
+                        verificationText="Verify Phone Number"
+                    />
+                </AuthLogoComponent>
             </div>
         </div>
-	);
+    );
 }

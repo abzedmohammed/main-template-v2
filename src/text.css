@@ -1,170 +1,527 @@
-.txt_5 {
-    font-size: 0.5rem;
+/*
+ * Fluid typography scale
+ * Sizes: 0.5rem -> 3.5rem (1/16rem steps)
+ * Weights: thin(300), normal(400), medium(500), semi(600), bold(700)
+ */
+
+[class^='txt_'] {
+    font-style: normal;
     font-weight: 400;
-    line-height: normal;
 }
 
-.txt_625 {
-    font-size: 0.625rem;
-    font-weight: 400;
-    line-height: 1rem;
+[class$='_thin'] {
+    font-weight: 300;
 }
 
-.txt_6875 {
-    font-size: 0.6875rem;
+[class$='_normal'] {
     font-weight: 400;
-    line-height: 1rem;
 }
 
-.txt_6875_medium {
-    font-size: 0.6875rem;
+[class$='_medium'] {
     font-weight: 500;
-    line-height: 1.25rem;
-    letter-spacing: 0.00688rem;
 }
 
-.txt_75 {
-    font-size: 0.75rem;
-    font-weight: 400;
-    line-height: 1.25rem;
-}
-
-.txt_75_medium {
-    font-size: 0.75rem;
-    font-weight: 500;
-    line-height: 1rem;
-}
-
-.txt_75_semi {
-    font-size: 0.75rem;
+[class$='_semi'] {
     font-weight: 600;
-    line-height: 1.25rem;
 }
 
-.txt_875 {
-    font-size: 0.875rem;
-    font-weight: 400;
-    line-height: 1.5rem;
-    /* 171.429% */
-}
-
-.txt_875_medium {
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1.25rem;
-}
-
-.txt_875_semi {
-    font-size: 0.875rem;
-    font-weight: 600;
-    line-height: 1.25rem;
-}
-
-.txt_875_bold {
-    font-size: 0.875rem;
+[class$='_bold'] {
     font-weight: 700;
-    line-height: 1.25rem;
 }
 
-.txt_8125 {
-    font-size: 0.8125rem;
-    font-weight: 400;
-    line-height: 1.25rem;
+.txt_5,
+.txt_5_thin,
+.txt_5_normal,
+.txt_5_medium,
+.txt_5_semi,
+.txt_5_bold {
+    font-size: clamp(0.45rem, calc(0.4237rem + 0.1316vw), 0.55rem);
+    line-height: 1.45;
 }
 
-.txt_8125_medium {
-    font-size: 0.8125rem;
-    font-weight: 500;
-    line-height: 1.25rem;
+.txt_5625,
+.txt_5625_thin,
+.txt_5625_normal,
+.txt_5625_medium,
+.txt_5625_semi,
+.txt_5625_bold {
+    font-size: clamp(0.5062rem, calc(0.4766rem + 0.148vw), 0.6188rem);
+    line-height: 1.45;
 }
 
-.txt_8125_semi {
-    font-size: 0.8125rem;
-    font-weight: 600;
-    line-height: 1.75rem;
+.txt_625,
+.txt_625_thin,
+.txt_625_normal,
+.txt_625_medium,
+.txt_625_semi,
+.txt_625_bold {
+    font-size: clamp(0.5625rem, calc(0.5296rem + 0.1645vw), 0.6875rem);
+    line-height: 1.45;
 }
 
+.txt_6875,
+.txt_6875_thin,
+.txt_6875_normal,
+.txt_6875_medium,
+.txt_6875_semi,
+.txt_6875_bold {
+    font-size: clamp(0.6188rem, calc(0.5826rem + 0.1809vw), 0.7563rem);
+    line-height: 1.45;
+}
+
+.txt_75,
+.txt_75_thin,
+.txt_75_normal,
+.txt_75_medium,
+.txt_75_semi,
+.txt_75_bold {
+    font-size: clamp(0.675rem, calc(0.6355rem + 0.1974vw), 0.825rem);
+    line-height: 1.45;
+}
+
+.txt_8125,
+.txt_8125_thin,
+.txt_8125_normal,
+.txt_8125_medium,
+.txt_8125_semi,
 .txt_8125_bold {
-    font-size: 0.8125rem;
-    font-weight: 700;
-    line-height: 1.25rem;
+    font-size: clamp(0.7313rem, calc(0.6885rem + 0.2138vw), 0.8938rem);
+    line-height: 1.5;
 }
 
-.txt_9375 {
-    font-size: 0.9375rem;
-    font-weight: 400;
-    line-height: 1.5rem;
+.txt_875,
+.txt_875_thin,
+.txt_875_normal,
+.txt_875_medium,
+.txt_875_semi,
+.txt_875_bold {
+    font-size: clamp(0.7875rem, calc(0.7414rem + 0.2303vw), 0.9625rem);
+    line-height: 1.5;
 }
 
-.txt_9375_semi {
-    font-size: 0.9375rem;
-    font-weight: 600;
-    line-height: 1.75rem;
-}
-
+.txt_9375,
+.txt_9375_thin,
+.txt_9375_normal,
+.txt_9375_medium,
+.txt_9375_semi,
 .txt_9375_bold {
-    font-size: 0.9375rem;
-    font-weight: 700;
-    line-height: 1.5rem;
+    font-size: clamp(0.8438rem, calc(0.7944rem + 0.2467vw), 1.0313rem);
+    line-height: 1.5;
 }
 
-.txt_1_medium {
-    font-size: 1rem;
-    font-weight: 500;
-    line-height: 1.75rem;
-}
-
-.txt_1_semi {
-    font-size: 1rem;
-    font-weight: 600;
-    line-height: 1.75rem;
-}
-
+.txt_1,
+.txt_1_thin,
+.txt_1_normal,
+.txt_1_medium,
+.txt_1_semi,
 .txt_1_bold {
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 1.75rem;
+    font-size: clamp(0.9rem, calc(0.8474rem + 0.2632vw), 1.1rem);
+    line-height: 1.5;
 }
 
-.txt_1_125_medium {
-    font-size: 1.125rem;
-    font-weight: 500;
-    line-height: 1.75rem;
+.txt_1_0625,
+.txt_1_0625_thin,
+.txt_1_0625_normal,
+.txt_1_0625_medium,
+.txt_1_0625_semi,
+.txt_1_0625_bold {
+    font-size: clamp(0.9563rem, calc(0.9003rem + 0.2796vw), 1.1688rem);
+    line-height: 1.4;
 }
 
-.txt_1_125_semi {
-    font-size: 1.125rem;
-    font-weight: 600;
-    line-height: 2rem;
-}
-
+.txt_1_125,
+.txt_1_125_thin,
+.txt_1_125_normal,
+.txt_1_125_medium,
+.txt_1_125_semi,
 .txt_1_125_bold {
-    font-size: 1.25rem;
-    font-weight: 700;
-    line-height: 140%;
+    font-size: clamp(1.0125rem, calc(0.9533rem + 0.2961vw), 1.2375rem);
+    line-height: 1.4;
 }
 
+.txt_1_1875,
+.txt_1_1875_thin,
+.txt_1_1875_normal,
+.txt_1_1875_medium,
+.txt_1_1875_semi,
 .txt_1_1875_bold {
-    font-size: 1.1875rem;
-    font-weight: 700;
-    line-height: 1.875rem;
+    font-size: clamp(1.0688rem, calc(1.0062rem + 0.3125vw), 1.3063rem);
+    line-height: 1.4;
 }
 
+.txt_1_25,
+.txt_1_25_thin,
+.txt_1_25_normal,
+.txt_1_25_medium,
+.txt_1_25_semi,
 .txt_1_25_bold {
-    font-size: 1.25rem;
-    font-weight: 700;
-    line-height: normal;
+    font-size: clamp(1.125rem, calc(1.0592rem + 0.3289vw), 1.375rem);
+    line-height: 1.4;
 }
 
+.txt_1_3125,
+.txt_1_3125_thin,
+.txt_1_3125_normal,
+.txt_1_3125_medium,
+.txt_1_3125_semi,
+.txt_1_3125_bold {
+    font-size: clamp(1.1813rem, calc(1.1122rem + 0.3454vw), 1.4438rem);
+    line-height: 1.4;
+}
+
+.txt_1_375,
+.txt_1_375_thin,
+.txt_1_375_normal,
+.txt_1_375_medium,
+.txt_1_375_semi,
+.txt_1_375_bold {
+    font-size: clamp(1.2375rem, calc(1.1651rem + 0.3618vw), 1.5125rem);
+    line-height: 1.4;
+}
+
+.txt_1_4375,
+.txt_1_4375_thin,
+.txt_1_4375_normal,
+.txt_1_4375_medium,
+.txt_1_4375_semi,
+.txt_1_4375_bold {
+    font-size: clamp(1.2937rem, calc(1.2181rem + 0.3783vw), 1.5813rem);
+    line-height: 1.4;
+}
+
+.txt_1_5,
+.txt_1_5_thin,
+.txt_1_5_normal,
+.txt_1_5_medium,
+.txt_1_5_semi,
+.txt_1_5_bold {
+    font-size: clamp(1.35rem, calc(1.2711rem + 0.3947vw), 1.65rem);
+    line-height: 1.4;
+}
+
+.txt_1_5625,
+.txt_1_5625_thin,
+.txt_1_5625_normal,
+.txt_1_5625_medium,
+.txt_1_5625_semi,
+.txt_1_5625_bold {
+    font-size: clamp(1.4063rem, calc(1.324rem + 0.4112vw), 1.7188rem);
+    line-height: 1.3;
+}
+
+.txt_1_625,
+.txt_1_625_thin,
+.txt_1_625_normal,
+.txt_1_625_medium,
+.txt_1_625_semi,
+.txt_1_625_bold {
+    font-size: clamp(1.4625rem, calc(1.377rem + 0.4276vw), 1.7875rem);
+    line-height: 1.3;
+}
+
+.txt_1_6875,
+.txt_1_6875_thin,
+.txt_1_6875_normal,
+.txt_1_6875_medium,
+.txt_1_6875_semi,
+.txt_1_6875_bold {
+    font-size: clamp(1.5188rem, calc(1.4299rem + 0.4441vw), 1.8563rem);
+    line-height: 1.3;
+}
+
+.txt_1_75,
+.txt_1_75_thin,
+.txt_1_75_normal,
+.txt_1_75_medium,
+.txt_1_75_semi,
+.txt_1_75_bold {
+    font-size: clamp(1.575rem, calc(1.4829rem + 0.4605vw), 1.925rem);
+    line-height: 1.3;
+}
+
+.txt_1_8125,
+.txt_1_8125_thin,
+.txt_1_8125_normal,
+.txt_1_8125_medium,
+.txt_1_8125_semi,
+.txt_1_8125_bold {
+    font-size: clamp(1.6313rem, calc(1.5359rem + 0.477vw), 1.9938rem);
+    line-height: 1.3;
+}
+
+.txt_1_875,
+.txt_1_875_thin,
+.txt_1_875_normal,
+.txt_1_875_medium,
+.txt_1_875_semi,
 .txt_1_875_bold {
-    font-size: 1.875rem;
-    font-weight: 700;
-    line-height: 1.5rem;
+    font-size: clamp(1.6875rem, calc(1.5888rem + 0.4934vw), 2.0625rem);
+    line-height: 1.3;
+}
+
+.txt_1_9375,
+.txt_1_9375_thin,
+.txt_1_9375_normal,
+.txt_1_9375_medium,
+.txt_1_9375_semi,
+.txt_1_9375_bold {
+    font-size: clamp(1.7438rem, calc(1.6418rem + 0.5099vw), 2.1313rem);
+    line-height: 1.3;
+}
+
+.txt_2,
+.txt_2_thin,
+.txt_2_normal,
+.txt_2_medium,
+.txt_2_semi,
+.txt_2_bold {
+    font-size: clamp(1.8rem, calc(1.6947rem + 0.5263vw), 2.2rem);
+    line-height: 1.3;
+}
+
+.txt_2_0625,
+.txt_2_0625_thin,
+.txt_2_0625_normal,
+.txt_2_0625_medium,
+.txt_2_0625_semi,
+.txt_2_0625_bold {
+    font-size: clamp(1.8562rem, calc(1.7477rem + 0.5428vw), 2.2688rem);
+    line-height: 1.3;
+}
+
+.txt_2_125,
+.txt_2_125_thin,
+.txt_2_125_normal,
+.txt_2_125_medium,
+.txt_2_125_semi,
+.txt_2_125_bold {
+    font-size: clamp(1.9125rem, calc(1.8007rem + 0.5592vw), 2.3375rem);
+    line-height: 1.3;
+}
+
+.txt_2_1875,
+.txt_2_1875_thin,
+.txt_2_1875_normal,
+.txt_2_1875_medium,
+.txt_2_1875_semi,
+.txt_2_1875_bold {
+    font-size: clamp(1.9688rem, calc(1.8536rem + 0.5757vw), 2.4063rem);
+    line-height: 1.3;
+}
+
+.txt_2_25,
+.txt_2_25_thin,
+.txt_2_25_normal,
+.txt_2_25_medium,
+.txt_2_25_semi,
+.txt_2_25_bold {
+    font-size: clamp(2.025rem, calc(1.9066rem + 0.5921vw), 2.475rem);
+    line-height: 1.3;
+}
+
+.txt_2_3125,
+.txt_2_3125_thin,
+.txt_2_3125_normal,
+.txt_2_3125_medium,
+.txt_2_3125_semi,
+.txt_2_3125_bold {
+    font-size: clamp(2.0813rem, calc(1.9595rem + 0.6086vw), 2.5438rem);
+    line-height: 1.3;
+}
+
+.txt_2_375,
+.txt_2_375_thin,
+.txt_2_375_normal,
+.txt_2_375_medium,
+.txt_2_375_semi,
+.txt_2_375_bold {
+    font-size: clamp(2.1375rem, calc(2.0125rem + 0.625vw), 2.6125rem);
+    line-height: 1.3;
+}
+
+.txt_2_4375,
+.txt_2_4375_thin,
+.txt_2_4375_normal,
+.txt_2_4375_medium,
+.txt_2_4375_semi,
+.txt_2_4375_bold {
+    font-size: clamp(2.1938rem, calc(2.0655rem + 0.6414vw), 2.6813rem);
+    line-height: 1.3;
+}
+
+.txt_2_5,
+.txt_2_5_thin,
+.txt_2_5_normal,
+.txt_2_5_medium,
+.txt_2_5_semi,
+.txt_2_5_bold {
+    font-size: clamp(2.25rem, calc(2.1184rem + 0.6579vw), 2.75rem);
+    line-height: 1.3;
+}
+
+.txt_2_5625,
+.txt_2_5625_thin,
+.txt_2_5625_normal,
+.txt_2_5625_medium,
+.txt_2_5625_semi,
+.txt_2_5625_bold {
+    font-size: clamp(2.3062rem, calc(2.1714rem + 0.6743vw), 2.8188rem);
+    line-height: 1.15;
+}
+
+.txt_2_625,
+.txt_2_625_thin,
+.txt_2_625_normal,
+.txt_2_625_medium,
+.txt_2_625_semi,
+.txt_2_625_bold {
+    font-size: clamp(2.3625rem, calc(2.2243rem + 0.6908vw), 2.8875rem);
+    line-height: 1.15;
+}
+
+.txt_2_6875,
+.txt_2_6875_thin,
+.txt_2_6875_normal,
+.txt_2_6875_medium,
+.txt_2_6875_semi,
+.txt_2_6875_bold {
+    font-size: clamp(2.4188rem, calc(2.2773rem + 0.7072vw), 2.9563rem);
+    line-height: 1.15;
+}
+
+.txt_2_75,
+.txt_2_75_thin,
+.txt_2_75_normal,
+.txt_2_75_medium,
+.txt_2_75_semi,
+.txt_2_75_bold {
+    font-size: clamp(2.475rem, calc(2.3303rem + 0.7237vw), 3.025rem);
+    line-height: 1.15;
+}
+
+.txt_2_8125,
+.txt_2_8125_thin,
+.txt_2_8125_normal,
+.txt_2_8125_medium,
+.txt_2_8125_semi,
+.txt_2_8125_bold {
+    font-size: clamp(2.5313rem, calc(2.3832rem + 0.7401vw), 3.0938rem);
+    line-height: 1.15;
+}
+
+.txt_2_875,
+.txt_2_875_thin,
+.txt_2_875_normal,
+.txt_2_875_medium,
+.txt_2_875_semi,
+.txt_2_875_bold {
+    font-size: clamp(2.5875rem, calc(2.4362rem + 0.7566vw), 3.1625rem);
+    line-height: 1.15;
+}
+
+.txt_2_9375,
+.txt_2_9375_thin,
+.txt_2_9375_normal,
+.txt_2_9375_medium,
+.txt_2_9375_semi,
+.txt_2_9375_bold {
+    font-size: clamp(2.6438rem, calc(2.4891rem + 0.773vw), 3.2313rem);
+    line-height: 1.15;
+}
+
+.txt_3,
+.txt_3_thin,
+.txt_3_normal,
+.txt_3_medium,
+.txt_3_semi,
+.txt_3_bold {
+    font-size: clamp(2.7rem, calc(2.5421rem + 0.7895vw), 3.3rem);
+    line-height: 1.15;
+}
+
+.txt_3_0625,
+.txt_3_0625_thin,
+.txt_3_0625_normal,
+.txt_3_0625_medium,
+.txt_3_0625_semi,
+.txt_3_0625_bold {
+    font-size: clamp(2.7563rem, calc(2.5951rem + 0.8059vw), 3.3688rem);
+    line-height: 1.15;
+}
+
+.txt_3_125,
+.txt_3_125_thin,
+.txt_3_125_normal,
+.txt_3_125_medium,
+.txt_3_125_semi,
+.txt_3_125_bold {
+    font-size: clamp(2.8125rem, calc(2.648rem + 0.8224vw), 3.4375rem);
+    line-height: 1.15;
+}
+
+.txt_3_1875,
+.txt_3_1875_thin,
+.txt_3_1875_normal,
+.txt_3_1875_medium,
+.txt_3_1875_semi,
+.txt_3_1875_bold {
+    font-size: clamp(2.8687rem, calc(2.701rem + 0.8388vw), 3.5063rem);
+    line-height: 1.15;
+}
+
+.txt_3_25,
+.txt_3_25_thin,
+.txt_3_25_normal,
+.txt_3_25_medium,
+.txt_3_25_semi,
+.txt_3_25_bold {
+    font-size: clamp(2.925rem, calc(2.7539rem + 0.8553vw), 3.575rem);
+    line-height: 1.15;
+}
+
+.txt_3_3125,
+.txt_3_3125_thin,
+.txt_3_3125_normal,
+.txt_3_3125_medium,
+.txt_3_3125_semi,
+.txt_3_3125_bold {
+    font-size: clamp(2.9813rem, calc(2.8069rem + 0.8717vw), 3.6438rem);
+    line-height: 1.15;
+}
+
+.txt_3_375,
+.txt_3_375_thin,
+.txt_3_375_normal,
+.txt_3_375_medium,
+.txt_3_375_semi,
+.txt_3_375_bold {
+    font-size: clamp(3.0375rem, calc(2.8599rem + 0.8882vw), 3.7125rem);
+    line-height: 1.15;
+}
+
+.txt_3_4375,
+.txt_3_4375_thin,
+.txt_3_4375_normal,
+.txt_3_4375_medium,
+.txt_3_4375_semi,
+.txt_3_4375_bold {
+    font-size: clamp(3.0938rem, calc(2.9128rem + 0.9046vw), 3.7813rem);
+    line-height: 1.15;
+}
+
+.txt_3_5,
+.txt_3_5_thin,
+.txt_3_5_normal,
+.txt_3_5_medium,
+.txt_3_5_semi,
+.txt_3_5_bold {
+    font-size: clamp(3.15rem, calc(2.9658rem + 0.9211vw), 3.85rem);
+    line-height: 1.15;
 }
 
 label {
     color: var(--Primarry, #25323e);
-    font-size: 0.875rem;
+    font-size: clamp(0.7875rem, calc(0.7414rem + 0.2303vw), 0.9625rem);
     font-weight: 600;
-    line-height: normal;
+    line-height: 1.4;
 }

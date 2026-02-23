@@ -1,23 +1,93 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+:root {
+    color-scheme: light;
+
+    /* Core colors */
+    --color-bg: #f4f3f3;
+    --color-surface: #ffffff;
+    --color-surface-alt: #f9fbfd;
+    --color-text: #121212;
+    --color-text-muted: #545454;
+    --color-border: #e5e5e5;
+
+    /* Semantic colors */
+    --color-primary: #000000;
+    --color-primary-contrast: #ffffff;
+    --color-secondary: #1e3a8a;
+    --color-success: #22c55e;
+    --color-warning: #f59e0b;
+    --color-danger: #ee1d52;
+    --color-info: #3b82f6;
+}
+
+:root[data-theme='light'] {
+    color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+    color-scheme: dark;
+
+    --color-bg: #0f1115;
+    --color-surface: #171a21;
+    --color-surface-alt: #1f2430;
+    --color-text: #f5f7fa;
+    --color-text-muted: #b5bcc9;
+    --color-border: #2f3645;
+
+    --color-primary: #f5f7fa;
+    --color-primary-contrast: #0f1115;
+    --color-secondary: #7ea2ff;
+    --color-success: #4ade80;
+    --color-warning: #fbbf24;
+    --color-danger: #fb7185;
+    --color-info: #60a5fa;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+        color-scheme: dark;
+
+        --color-bg: #0f1115;
+        --color-surface: #171a21;
+        --color-surface-alt: #1f2430;
+        --color-text: #f5f7fa;
+        --color-text-muted: #b5bcc9;
+        --color-border: #2f3645;
+
+        --color-primary: #f5f7fa;
+        --color-primary-contrast: #0f1115;
+        --color-secondary: #7ea2ff;
+        --color-success: #4ade80;
+        --color-warning: #fbbf24;
+        --color-danger: #fb7185;
+        --color-info: #60a5fa;
+    }
+}
 
 * {
-  font-family: "Inter", sans-serif !important;
+    font-family: 'Inter', sans-serif !important;
 }
 
 html,
-body {
-  height: 100%;
-  background: #F4F3F3 !important;
+body,
+#root {
+    min-height: 100%;
+    background: var(--color-bg) !important;
+    color: var(--color-text);
 }
 
 body::-webkit-scrollbar {
-  display: none;
+    display: none;
 }
 
-button{
-  cursor: pointer;
+button {
+    cursor: pointer;
 }
 
-h1, h2, h3 {
-  font-family: "Poppins", sans-serif !important;
+h1,
+h2,
+h3 {
+    font-family: 'Poppins', sans-serif !important;
+    color: var(--color-text);
 }

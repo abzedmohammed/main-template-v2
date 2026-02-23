@@ -1,18 +1,19 @@
 import {
     BankOutlined,
     DesktopOutlined,
+    LogoutOutlined,
     PieChartOutlined,
     RightCircleOutlined,
     SettingOutlined,
     TeamOutlined,
     UserOutlined,
-} from "@ant-design/icons";
-import { Avatar, Breadcrumb, Layout, Menu, notification, theme } from "antd";
-import { useCallback, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { logoutStateFn } from "../../features/auth/authSlice";
-import { logoutUrl } from "../../utils";
+} from '@ant-design/icons';
+import { Avatar, Breadcrumb, Grid, Layout, Menu, notification, theme } from 'antd';
+import { useCallback, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { logoutStateFn } from '../../features/auth/authSlice';
+import { logoutUrl } from '../../utils';
 import {
     TextDynamic,
     PrimaryDropdown,
@@ -20,15 +21,14 @@ import {
     usePaginatedQuery,
     useDynamicMutation,
     defaultDropdownOverlayStyle,
-} from "abzed-utils";
-import { avatarItemsFn } from "../../items_list/itemList";
-import { sideBarOpenFn } from "../../features/global/globalSlice";
-import { SideDrawer } from "../navigation";
-import { useTokenExpiryChecker } from "../../hooks/useTokenExpiryChecker";
+} from 'abzed-utils';
+import { sideBarOpenFn } from '../../features/global/globalSlice';
+import { SideDrawer } from '../navigation';
+import { useTokenExpiryChecker } from '../../hooks/useTokenExpiryChecker';
 import {
     adminFetchInAppNotification,
     updateInAppNotification,
-} from "../../actions/adminActions";
+} from '../../actions/adminActions';
 const { Header, Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
     return {
@@ -39,20 +39,19 @@ function getItem(label, key, icon, children) {
     };
 }
 const items = [
-    getItem("Dashboard", "/dashboard", <PieChartOutlined />),
-    getItem("Events", "/events", <DesktopOutlined />),
-    getItem("Casual Users", "/casual-users", <TeamOutlined />),
-    getItem("Payments", "/payments", <BankOutlined />),
-    getItem("Profile", "/profile", <SettingOutlined />),
+    getItem('Dashboard', '/dashboard', <PieChartOutlined />),
+    getItem('Events', '/events', <DesktopOutlined />),
+    getItem('Casual Users', '/casual-users', <TeamOutlined />),
+    getItem('Payments', '/payments', <BankOutlined />),
+    getItem('Profile', '/profile', <SettingOutlined />),
 ];
-
-const content = <div className="loader" />;
-const isSmallScreen = window.innerWidth < 768;
 
 export default function MainLayout() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [api, contextHolder] = notification.useNotification();
+    const screens = Grid.useBreakpoint();
+    const isSmallScreen = !screens.md;
 
     const tokenModal = useTokenExpiryChecker();
 
@@ -86,7 +85,7 @@ export default function MainLayout() {
             const { notId, notMessage } = notification;
 
             api.info({
-                message: "New Notification",
+                message: 'New Notification',
                 description: notMessage,
                 duration: 9,
                 key: notId,
@@ -96,7 +95,7 @@ export default function MainLayout() {
 
             updateMutation.mutate({
                 notId,
-                notStatus: "UNREAD",
+                notStatus: 'UNREAD',
             });
         },
         [api, updateMutation]
@@ -104,48 +103,73 @@ export default function MainLayout() {
 
     const location = useLocation();
 
-    const { sideBarOpen, initLoading } = useSelector((state) => state.global);
+    const { sideBarOpen } = useSelector((state) => state.global);
     const { user } = useSelector((state) => state.auth);
-
-    const hasBadge = allNotificationsData?.some(
-        (notification) => notification?.notStatus === "UNREAD"
+    const selectedMenuItem = items.find(
+        (item) =>
+            location.pathname === item.key || location.pathname.startsWith(`${item.key}/`)
     );
+    const selectedMenuKeys = selectedMenuItem ? [selectedMenuItem.key] : [];
 
     const locationText =
         location.pathname
-            .split("/")
+            .split('/')
             .slice(1)
-            .join(" / ")
-            .replace(/-/g, " ")
-            .replace(/\b\w/g, (char) => char.toUpperCase()) || "Dashboard";
+            .join(' / ')
+            .replace(/-/g, ' ')
+            .replace(/\b\w/g, (char) => char.toUpperCase()) || 'Dashboard';
 
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
 
     const handleMenuClick = ({ key }) => {
-        if (key.startsWith("/")) {
+        if (key.startsWith('/')) {
             navigate(key);
         }
     };
 
-    const handleSibeDrawer = () => {
+    const handleSidebarDrawer = () => {
         dispatch(sideBarOpenFn());
     };
 
     const handleLogout = () => {
+        localStorage.removeItem('token');
         dispatch(logoutStateFn());
-        window.location.href = logoutUrl;
+        window.location.assign(logoutUrl);
     };
 
-    const avatarItems = avatarItemsFn(handleLogout);
+    const avatarItems = [
+        {
+            label: (
+                <Link to="/profile" className="fx_item_center gap-2.5">
+                    <SettingOutlined />
+                    <span className="avatar_dropdown_text">Profile</span>
+                </Link>
+            ),
+            key: '1',
+        },
+        {
+            label: (
+                <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="fx_item_center gap-2.5 pointer w-full text-left"
+                >
+                    <LogoutOutlined />
+                    <span className="avatar_dropdown_text">Log out</span>
+                </button>
+            ),
+            key: '2',
+        },
+    ];
 
     useEffect(() => {
         if (!allNotificationsData?.length) return;
 
         const newNotifications = allNotificationsData.filter(
             (item) =>
-                item.notStatus === "NEW" &&
+                item.notStatus === 'NEW' &&
                 !processedNotifications.current.has(item.notId)
         );
 
@@ -154,18 +178,17 @@ export default function MainLayout() {
         });
     }, [allNotificationsData, openNotification]);
 
-    useEffect(() => {}, [initLoading]);
-
     useEffect(() => {
         refetch();
-    }, [location.pathname]);
+    }, [location.pathname, refetch]);
 
     return (
-        <Layout style={{ minHeight: "100vh" }}>
+        <Layout style={{ minHeight: '100vh' }}>
             <SideDrawer
-                handleSibeDrawer={handleSibeDrawer}
+                handleSidebarDrawer={handleSidebarDrawer}
                 open={sideBarOpen && isSmallScreen}
                 items={items}
+                selectedKeys={selectedMenuKeys}
             />
             {isSmallScreen ? null : (
                 <Sider
@@ -176,7 +199,7 @@ export default function MainLayout() {
                     <div className="main_logo" />
                     <Menu
                         theme="dark"
-                        defaultSelectedKeys={["1"]}
+                        selectedKeys={selectedMenuKeys}
                         mode="inline"
                         items={items}
                         onClick={handleMenuClick}
@@ -188,15 +211,14 @@ export default function MainLayout() {
                 <MainLayoutHeader
                     user={user}
                     avatarItems={avatarItems}
-                    handleSibeDrawer={handleSibeDrawer}
-                    navigate={navigate}
-                    hasBadge={hasBadge}
+                    colorBgContainer={colorBgContainer}
+                    handleSidebarDrawer={handleSidebarDrawer}
                 />
-                <Content style={{ margin: "0 16px" }}>
+                <Content style={{ margin: '0 16px' }}>
                     <Breadcrumb
-                        style={{ margin: "16px 0" }}
+                        style={{ margin: '16px 0' }}
                         items={[
-                            { title: "Home" },
+                            { title: 'Home' },
                             {
                                 title: locationText,
                             },
@@ -206,16 +228,12 @@ export default function MainLayout() {
                     <div
                         style={{
                             padding: 24,
-                            minHeight: "calc(100vh - 150px)",
+                            minHeight: 'calc(100vh - 150px)',
                             background: colorBgContainer,
                             borderRadius: borderRadiusLG,
                         }}
                     >
-                        {initLoading ? (
-                            <Spin tip="Loading">{content}</Spin>
-                        ) : (
-                            <Outlet />
-                        )}
+                        <Outlet />
                         {contextHolder}
                     </div>
                 </Content>
@@ -228,14 +246,16 @@ const MainLayoutHeader = ({
     user,
     avatarItems,
     colorBgContainer,
-    handleSibeDrawer,
+    handleSidebarDrawer,
 }) => (
-    <Header
-        style={{ padding: 0, background: colorBgContainer, display: "flex" }}
-    >
+    <Header style={{ padding: 0, background: colorBgContainer, display: 'flex' }}>
         <div className="w-full fx_btwn_center px-6">
             <div className="flex md:hidden">
-                <button onClick={handleSibeDrawer} type="button">
+                <button
+                    onClick={handleSidebarDrawer}
+                    type="button"
+                    aria-label="Open menu"
+                >
                     <RightCircleOutlined className="text-[1.7rem]" />
                 </button>
             </div>
@@ -247,11 +267,11 @@ const MainLayoutHeader = ({
                             <Avatar size={31} icon={<UserOutlined />} />
                             <div className="fx_col">
                                 <TextDynamic
-                                    className={"txt_75_medium"}
+                                    className={'txt_75_medium'}
                                     text={user?.usrFullName}
                                 />
                                 <TextDynamic
-                                    className={"txt_625"}
+                                    className={'txt_625'}
                                     text={user?.usrEmail}
                                 />
                             </div>

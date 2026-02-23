@@ -1,23 +1,18 @@
-import { Link } from "react-router-dom";
-import {
-    FormInputPassword,
-    DynamicBtn,
-    TextDynamic,
-    AntdForm,
-} from "abzed-utils";
-import { ArrowLeftSvg } from "../../../svgs";
+import { Link } from 'react-router-dom';
+import { FormInputPassword, DynamicBtn, TextDynamic, AntdForm } from 'abzed-utils';
+import { ROUTES } from '../../../routes';
 
 export default function PasswordFormComponent({
     form,
     onFinish,
-    text = "Submit",
+    text = 'Submit',
     showBackBtn = true,
     headerText,
     subHeaderText,
     isProcessing,
     watchedValues,
 }) {
-    const pswd = watchedValues?.usrEncryptedPassword || "";
+    const pswd = watchedValues?.usrEncryptedPassword || '';
 
     const has8Chars = pswd.length >= 8;
     const hasUpperCase = /[A-Z]/.test(pswd);
@@ -29,37 +24,32 @@ export default function PasswordFormComponent({
             <div className="fx_col text-center gap-6">
                 <TextDynamic
                     text={headerText}
-                    className={"txt_1_875_bold text-[#121212]"}
+                    className={'txt_1_875_bold text-[#121212]'}
                 />
-                <TextDynamic
-                    text={subHeaderText}
-                    className={"txt_9375 text-[#3D3D3D]"}
-                />
+                <TextDynamic text={subHeaderText} className={'txt_9375 text-[#3D3D3D]'} />
             </div>
 
-            <AntdForm form={form} handleSubmit={onFinish} formName={"login"}>
+            <AntdForm form={form} handleSubmit={onFinish} formName={'login'}>
                 <div className="w-full fx_col gap-5">
                     <FormInputPassword
-                        inputClassName={"auth_input"}
-                        inputName={"usrEncryptedPassword"}
-                        label={"Password"}
+                        inputClassName={'auth_input'}
+                        inputName={'usrEncryptedPassword'}
+                        label={'Password'}
                     />
 
                     <FormInputPassword
-                        inputClassName={"auth_input"}
-                        inputName={"usrEncryptedPasswordAlt"}
-                        label={"Confirm Password"}
+                        inputClassName={'auth_input'}
+                        inputName={'usrEncryptedPasswordAlt'}
+                        label={'Confirm Password'}
                     />
 
                     <div className="w-full grid grid-cols-2 gap-[.94rem]">
                         <DynamicBtn
-                            className={"plain_btn"}
+                            className={'plain_btn'}
                             text={
                                 <span
                                     style={{
-                                        color: has8Chars
-                                            ? "#572C80"
-                                            : "#545454",
+                                        color: has8Chars ? '#572C80' : '#545454',
                                     }}
                                     className="txt_875"
                                 >
@@ -69,13 +59,11 @@ export default function PasswordFormComponent({
                         />
 
                         <DynamicBtn
-                            className={"plain_btn"}
+                            className={'plain_btn'}
                             text={
                                 <span
                                     style={{
-                                        color: hasUpperCase
-                                            ? "#572C80"
-                                            : "#545454",
+                                        color: hasUpperCase ? '#572C80' : '#545454',
                                     }}
                                     className="txt_875"
                                 >
@@ -85,13 +73,11 @@ export default function PasswordFormComponent({
                         />
 
                         <DynamicBtn
-                            className={"plain_btn"}
+                            className={'plain_btn'}
                             text={
                                 <span
                                     style={{
-                                        color: hasNumber
-                                            ? "#572C80"
-                                            : "#545454",
+                                        color: hasNumber ? '#572C80' : '#545454',
                                     }}
                                     className="txt_875"
                                 >
@@ -101,13 +87,11 @@ export default function PasswordFormComponent({
                         />
 
                         <DynamicBtn
-                            className={"plain_btn"}
+                            className={'plain_btn'}
                             text={
                                 <span
                                     style={{
-                                        color: hasSymbol
-                                            ? "#572C80"
-                                            : "#545454",
+                                        color: hasSymbol ? '#572C80' : '#545454',
                                     }}
                                     className="txt_875"
                                 >
@@ -120,19 +104,19 @@ export default function PasswordFormComponent({
 
                 <div className="fx_col mt-[1.88rem] gap-[1.88rem]">
                     <DynamicBtn
-                        width={"100%"}
-                        className={"primary_btn"}
+                        width={'100%'}
+                        className={'primary_btn'}
                         text={text}
                         type="submit"
                         isProcessing={isProcessing}
                     />
                     {showBackBtn && (
-                        <Link className="fx_center" to="/auth/login">
+                        <Link className="fx_center" to={ROUTES.AUTH.LOGIN}>
                             <div className="fx_item_center gap-2.5">
-                                <ArrowLeftSvg />
+                                <span aria-hidden="true">&lt;</span>
                                 <TextDynamic
-                                    text={"Back to Log in"}
-                                    className={"txt_8125_semi text-[#3D3D3D]"}
+                                    text={'Back to Log in'}
+                                    className={'txt_8125_semi text-[#3D3D3D]'}
                                 />
                             </div>
                         </Link>
