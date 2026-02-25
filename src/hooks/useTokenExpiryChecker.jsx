@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Modal } from 'antd';
-import { logoutUrl, notifyError } from '../utils';
+import { notifyError } from '../utils';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
-import { logoutStateFn } from '../features/auth/authSlice';
 import { useDynamicMutation } from 'abzed-utils';
 import { adminRefreshToken } from '../actions/adminActions';
+import { authService } from '../services/authService';
+import { tokenService } from '../services/tokenService';
 
 const PROMPT_BEFORE_EXPIRY_SECONDS = 60;
 
@@ -17,9 +18,7 @@ export function useTokenExpiryChecker() {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const handleRedirect = useCallback(() => {
-        localStorage.removeItem('token');
-        dispatch(logoutStateFn());
-        window.location.assign(logoutUrl);
+        authService.logout({ dispatch });
     }, [dispatch]);
 
     const refreshMutation = useDynamicMutation({
@@ -34,7 +33,7 @@ export function useTokenExpiryChecker() {
         onSuccess: ({ response }) => {
             const refreshedToken = response?.token || response?.data?.token;
             if (refreshedToken) {
-                localStorage.setItem('token', refreshedToken);
+                tokenService.set(refreshedToken);
             }
 
             setIsModalVisible(false);
@@ -47,19 +46,24 @@ export function useTokenExpiryChecker() {
         }
 
         let timeoutId;
+
+        const clearTokenTimer = () => {
+            clearTimeout(timeoutId);
+        };
+
         const openModal = (delay = 0) => {
+            clearTokenTimer();
             timeoutId = setTimeout(() => {
                 setIsModalVisible(true);
             }, delay);
         };
 
-        const token = localStorage.getItem('token');
-        if (!token) {
-            openModal();
-            return () => clearTimeout(timeoutId);
-        }
+        const scheduleTokenCheck = (token) => {
+            if (!token) {
+                openModal();
+                return;
+            }
 
-        const scheduleTokenCheck = () => {
             try {
                 const decoded = jwtDecode(token);
 
@@ -73,21 +77,30 @@ export function useTokenExpiryChecker() {
 
                 if (timeLeft <= 0) {
                     openModal();
-                } else {
-                    const timeBeforePrompt = Math.max(
-                        timeLeft - PROMPT_BEFORE_EXPIRY_SECONDS,
-                        1
-                    );
-                    openModal(timeBeforePrompt * 1000);
+                    return;
                 }
+
+                const timeBeforePrompt = Math.max(
+                    timeLeft - PROMPT_BEFORE_EXPIRY_SECONDS,
+                    1
+                );
+                openModal(timeBeforePrompt * 1000);
             } catch {
                 openModal();
             }
         };
 
-        scheduleTokenCheck();
+        scheduleTokenCheck(tokenService.get());
 
-        return () => clearTimeout(timeoutId);
+        const unsubscribe = tokenService.subscribe((nextToken) => {
+            setIsModalVisible(false);
+            scheduleTokenCheck(nextToken);
+        });
+
+        return () => {
+            clearTokenTimer();
+            unsubscribe();
+        };
     }, [isActive]);
 
     const handleRefresh = () => {

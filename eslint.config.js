@@ -8,6 +8,16 @@ import jsxA11y from 'eslint-plugin-jsx-a11y';
 export default [
     { ignores: ['dist'] },
     {
+        files: ['**/*.test.{js,jsx}'],
+        languageOptions: {
+            globals: {
+                ...globals.browser,
+                ...globals.node,
+                ...globals.vitest,
+            },
+        },
+    },
+    {
         files: ['**/*.{js,jsx}'],
         languageOptions: {
             ecmaVersion: 2020,

@@ -10,6 +10,7 @@ import { notifyError } from '../../utils';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { logoutStateFn } from '../../features/auth/authSlice';
+import { tokenService } from '../../services/tokenService';
 
 export default function Login() {
     const [form] = Form.useForm();
@@ -26,7 +27,7 @@ export default function Login() {
     };
 
     useEffect(() => {
-        localStorage.removeItem('token');
+        tokenService.clear();
         dispatch(logoutStateFn());
     }, [dispatch]);
 

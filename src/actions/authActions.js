@@ -3,22 +3,19 @@ import { authStateFn, userIdStateFn } from '../features/auth/authSlice';
 import { notifyError, notifySuccess } from '../utils';
 import { jwtDecode } from 'jwt-decode';
 import { ROUTES } from '../routes';
+import { authService } from '../services/authService';
+import { tokenService } from '../services/tokenService';
 
 const handleLoginSuccess = ({ token, dispatch, navigate, successMessage }) => {
     if (token) {
-        localStorage.setItem('token', token);
+        tokenService.set(token);
         const decoded = jwtDecode(token);
         decoded.role = decoded?.role || 'ADMIN';
 
         notifySuccess(successMessage);
         dispatch(authStateFn(decoded));
 
-        if (navigate) {
-            navigate(ROUTES.DASHBOARD, { replace: true });
-            return;
-        }
-
-        window.location.replace(`/#${ROUTES.DASHBOARD}`);
+        authService.redirectToDashboard({ navigate });
     } else {
         notifyError('Could not verify account');
     }

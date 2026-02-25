@@ -2,11 +2,11 @@
 
 Production-ready React starter with:
 
-- Vite + React 18
+- Vite + React 19
 - Redux Toolkit + redux-persist
 - React Query (with persisted cache)
-- Ant Design + Tailwind CSS
-- `abzed-utils` UI/hooks helpers
+- Ant Design 6 + Tailwind CSS 4
+- `abzed-utils@2.x` UI/hooks helpers
 
 ## Getting Started
 
@@ -38,7 +38,11 @@ npm run dev
 - `npm run build`: Production build
 - `npm run preview`: Preview production build
 - `npm run lint`: Run ESLint
-- `npm run check`: Run lint + build
+- `npm run format`: Auto-format files with Prettier
+- `npm run format:check`: Validate formatting
+- `npm run test`: Run unit tests with Vitest
+- `npm run test:watch`: Run tests in watch mode
+- `npm run check`: Run format check + lint + tests + build
 - `npm run audit:prod`: Security audit for production dependencies only
 
 ## Project Structure
@@ -47,19 +51,21 @@ npm run dev
 - `src/app`: Redux store setup
 - `src/components`: Shared UI and layouts
 - `src/features`: Redux slices
-- `src/hooks`: Custom hooks (session/token handling)
-- `src/pages`: Route-level screens
+- `src/hooks`: Session/token handling and app hooks
 - `src/routes`: Router config and role-based route mapping
+- `src/services`: App ownership layer for token/auth concerns
+- `src/pages`: Route-level screens
 
-## Notes
+## Standards Notes
 
-- `abzed-utils` is pinned to `1.1.2` for compatibility with `antd@5`.
-- Route modules are lazy-loaded for smaller initial bundles.
-- Lockfile is intended to be committed for reproducible installs.
+- App-only concerns (auth redirects, token lifecycle) live in `src/services`.
+- `abzed-utils` should remain reusable and avoid app-specific behavior.
+- Keep routing strategy explicit (`createHashRouter`) unless deployment needs change.
 
-## Recommended Workflow
+## Compatibility
 
-1. Implement feature
-2. Run `npm run check`
-3. Review warnings and fix before commit
-4. Run `npm run audit:prod` for release validation
+See `docs/COMPATIBILITY.md` for supported shared dependency versions.
+
+## Standards
+
+See `docs/STANDARDS.md` for project ownership boundaries and quality rules.

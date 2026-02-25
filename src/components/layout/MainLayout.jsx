@@ -12,8 +12,7 @@ import { Avatar, Breadcrumb, Grid, Layout, Menu, notification, theme } from 'ant
 import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { logoutStateFn } from '../../features/auth/authSlice';
-import { logoutUrl } from '../../utils';
+import { authService } from '../../services/authService';
 import {
     TextDynamic,
     PrimaryDropdown,
@@ -134,9 +133,7 @@ export default function MainLayout() {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        dispatch(logoutStateFn());
-        window.location.assign(logoutUrl);
+        authService.logout({ dispatch });
     };
 
     const avatarItems = [
