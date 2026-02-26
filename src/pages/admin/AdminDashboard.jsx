@@ -1,5 +1,5 @@
-import { PageHeader } from '../../components/navigation';
+import { StatCard } from './components';
 
 export default function AdminDashboard() {
-    return <PageHeader header="Dashboard" body="Summary of events, payments, and more" />;
+    return <StatCard title="Dashboard" value="Welcome" />;
 }

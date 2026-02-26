@@ -1,8 +1,9 @@
 import { Form } from 'antd';
-import { AuthLogoComponent, PasswordFormComponent } from './auth_components';
-import { useDynamicMutation, validatePassword } from 'abzed-utils';
+import { AuthLogoComponent, PasswordFormComponent } from './components';
+import { validatePassword } from 'abzed-utils';
 import { notifyError } from '../../utils';
 import { updatePasswordAction } from '../../actions/authActions';
+import { useAuthFormMutation } from './hooks';
 import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 import { ROUTES } from '../../routes';
@@ -13,11 +14,8 @@ export default function UpdatePassword() {
 
     const { userId } = useSelector((state) => state.auth);
 
-    const requestMutation = useDynamicMutation({
-        mutationFn: updatePasswordAction.mutationFn,
-        onError: notifyError,
-        onSuccess: updatePasswordAction.onSuccess,
-    });
+    const { saveMutation: requestMutation, isProcessing } =
+        useAuthFormMutation(updatePasswordAction);
 
     if (!userId) {
         return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
@@ -51,7 +49,7 @@ export default function UpdatePassword() {
                         onFinish={onFinish}
                         headerText="Create Password"
                         subHeaderText="Let's create a password to secure your account."
-                        isProcessing={requestMutation.isPending}
+                        isProcessing={isProcessing}
                         watchedValues={watchedValues}
                     />
                 </AuthLogoComponent>
