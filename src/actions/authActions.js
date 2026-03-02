@@ -23,6 +23,7 @@ const handleLoginSuccess = ({ token, dispatch, navigate, successMessage }) => {
 
 export const loginAction = {
     mutationFn: async (data) => axiosInstance.post('/auth/sign_in', data),
+    onError: notifyError,
     onSuccess: ({ response, navigate, dispatch }) => {
         notifySuccess('Please verify your account');
         dispatch(userIdStateFn(response?.data?.usrId));
@@ -32,6 +33,7 @@ export const loginAction = {
 
 export const registerAction = {
     mutationFn: async (data) => axiosInstance.post('/auth/sign_up', data),
+    onError: notifyError,
     onSuccess: ({ response, dispatch, navigate, form }) => {
         notifySuccess('Registration successful. Please verify your phone number');
         dispatch(userIdStateFn(response?.data?.usrId));
@@ -59,6 +61,7 @@ export const accountResendOtp = {
 
 export const forgotPasswordAction = {
     mutationFn: async (data) => axiosInstance.post('/auth/reset_password', data),
+    onError: notifyError,
     onSuccess: ({ response, dispatch, navigate }) => {
         dispatch(userIdStateFn(response?.data?.usrId));
         notifySuccess('OTP sent successfully');
@@ -81,6 +84,7 @@ export const forgotPasswordVerificationAction = {
 
 export const updatePasswordAction = {
     mutationFn: async (data) => axiosInstance.post('/auth/update_password', data),
+    onError: notifyError,
     onSuccess: ({ navigate }) => {
         notifySuccess('Password updated successfully');
         navigate(ROUTES.AUTH.LOGIN);

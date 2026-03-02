@@ -1,25 +1,18 @@
-import { Form } from 'antd';
 import {
     AuthLogoComponent,
     AuthSideComponent,
     RegisterFormComponent,
-} from './auth_components';
-import { useDynamicMutation } from 'abzed-utils';
+} from './components';
 import { registerAction } from '../../actions/authActions';
-import { notifyError } from '../../utils';
+import { useAuthFormMutation } from './hooks';
 
 export default function Register() {
-    const [form] = Form.useForm();
-
-    const requestMutation = useDynamicMutation({
-        mutationFn: registerAction.mutationFn,
-        onError: notifyError,
-        onSuccess: registerAction.onSuccess,
+    const { form, onFinish, isProcessing } = useAuthFormMutation(registerAction, {
+        mapValues: (values, { form: currentForm }) => ({
+            ...values,
+            form: currentForm,
+        }),
     });
-
-    const onFinish = (params) => {
-        requestMutation.mutate({ ...params, form });
-    };
 
     return (
         <div className="auth_main">
@@ -32,7 +25,7 @@ export default function Register() {
                     <RegisterFormComponent
                         form={form}
                         onFinish={onFinish}
-                        isProcessing={requestMutation.isPending}
+                        isProcessing={isProcessing}
                     />
                 </AuthLogoComponent>
             </div>

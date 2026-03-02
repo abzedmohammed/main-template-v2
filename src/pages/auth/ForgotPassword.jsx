@@ -1,21 +1,9 @@
-import { Form } from 'antd';
-import { AuthLogoComponent, ForgotPasswordFormComponent } from './auth_components';
-import { useDynamicMutation } from 'abzed-utils';
+import { AuthLogoComponent, ForgotPasswordFormComponent } from './components';
 import { forgotPasswordAction } from '../../actions/authActions';
-import { notifyError } from '../../utils';
+import { useAuthFormMutation } from './hooks';
 
 export default function ForgotPassword() {
-    const [form] = Form.useForm();
-
-    const requestMutation = useDynamicMutation({
-        mutationFn: forgotPasswordAction.mutationFn,
-        onError: notifyError,
-        onSuccess: forgotPasswordAction.onSuccess,
-    });
-
-    const onFinish = (params) => {
-        requestMutation.mutate(params);
-    };
+    const { form, onFinish, isProcessing } = useAuthFormMutation(forgotPasswordAction);
 
     return (
         <div className="auth_main_alt">
@@ -24,7 +12,7 @@ export default function ForgotPassword() {
                     <ForgotPasswordFormComponent
                         form={form}
                         onFinish={onFinish}
-                        isProcessing={requestMutation.isPending}
+                        isProcessing={isProcessing}
                     />
                 </AuthLogoComponent>
             </div>

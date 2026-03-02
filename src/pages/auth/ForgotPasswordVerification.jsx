@@ -2,7 +2,7 @@ import { Form } from 'antd';
 import { forgotPasswordVerificationAction } from '../../actions/authActions';
 import { Navigate } from 'react-router-dom';
 import { ROUTES } from '../../routes';
-import { AuthLogoComponent, OTPFormComponent } from './auth_components';
+import { AuthLogoComponent, OTPFormComponent } from './components';
 import { useOtpVerificationFlow } from './hooks/useOtpVerificationFlow';
 
 export default function ForgotPasswordVerification() {

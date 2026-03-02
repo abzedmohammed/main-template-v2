@@ -1,30 +1,15 @@
-import {
-    AuthLogoComponent,
-    AuthSideComponent,
-    LoginFormComponent,
-} from './auth_components';
-import { Form } from 'antd';
-import { useDynamicMutation } from 'abzed-utils';
+import { AuthLogoComponent, AuthSideComponent, LoginFormComponent } from './components';
 import { loginAction } from '../../actions/authActions';
-import { notifyError } from '../../utils';
+import { useAuthFormMutation } from './hooks';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { logoutStateFn } from '../../features/auth/authSlice';
 import { tokenService } from '../../services/tokenService';
 
 export default function Login() {
-    const [form] = Form.useForm();
     const dispatch = useDispatch();
 
-    const requestMutation = useDynamicMutation({
-        mutationFn: loginAction.mutationFn,
-        onError: notifyError,
-        onSuccess: loginAction.onSuccess,
-    });
-
-    const onFinish = (params) => {
-        requestMutation.mutate(params);
-    };
+    const { form, onFinish, isProcessing } = useAuthFormMutation(loginAction);
 
     useEffect(() => {
         tokenService.clear();
@@ -42,7 +27,7 @@ export default function Login() {
                     <LoginFormComponent
                         form={form}
                         onFinish={onFinish}
-                        isProcessing={requestMutation.isPending}
+                        isProcessing={isProcessing}
                     />
                 </AuthLogoComponent>
             </div>
