@@ -73,7 +73,7 @@ export default function RegisterFormComponent({ form, onFinish, isProcessing }) 
 
                     <div className="fx_col mt-[1.56rem] gap-[1.88rem]">
                         <DynamicBtn
-                            isProcessing={isProcessing}
+                            loading={isProcessing}
                             width={'100%'}
                             className={'primary_btn'}
                             text={'Continue'}

@@ -1,59 +1,61 @@
-import { PageHeader } from '../components/navigation';
+import { useEffect } from 'react';
 import flags from 'react-phone-number-input/flags';
-
-import { Form } from 'antd';
-import { adminSave } from '../actions/adminActions';
-import { notifyError, notifySuccess } from '../utils';
 import { useSelector } from 'react-redux';
 import {
+    AntdForm,
     FormInput,
     FormInputEmail,
     FormInputPassword,
     FormInputPhone,
-    useDynamicMutation,
     validatePassword,
-    AntdForm,
 } from 'abzed-utils';
-import { useEffect } from 'react';
+import { adminSaveAction } from '../actions/admin';
+import { PageHeader } from '../components/navigation';
+import useFormMutation from './useFormMutation';
+import { notifyError, notifySuccess } from '../utils';
 
 export default function Profile() {
     const { user } = useSelector((state) => state.auth);
 
-    const [form] = Form.useForm();
-
-    const saveMutation = useDynamicMutation({
-        mutationFn: adminSave.mutationFn,
-        onError: notifyError,
-        onSuccess: () => {
-            notifySuccess('Profile updated successfully');
+    const { form, onFinish, isProcessing } = useFormMutation({
+        action: adminSaveAction,
+        options: {
+            mapValues: (values) => ({
+                usrId: user?.usrId,
+                usrSecret: values.usrSecret?.trim(),
+                ...values,
+            }),
+            onSuccess: () => {
+                notifySuccess('Profile updated successfully');
+            },
         },
-    });
+        beforeSubmit: (values) => {
+            const hasPasswordUpdate =
+                values.usrSecret || values.usrSecretConfirm || values.usrSecretOld;
 
-    const onFinish = async (values) => {
-        const hasPasswordUpdate =
-            values.usrSecret || values.usrSecretConfirm || values.usrSecretOld;
+            if (!hasPasswordUpdate) {
+                return true;
+            }
 
-        if (hasPasswordUpdate) {
             if (!values.usrSecretOld?.trim()) {
-                return notifyError('Current password is required');
+                notifyError('Current password is required');
+                return false;
             }
 
             const isPasswordValid = validatePassword(values.usrSecret || '');
             if (typeof isPasswordValid === 'string') {
-                return notifyError(isPasswordValid);
+                notifyError(isPasswordValid);
+                return false;
             }
 
             if (values.usrSecret?.trim() !== values.usrSecretConfirm?.trim()) {
-                return notifyError('Passwords do not match');
+                notifyError('Passwords do not match');
+                return false;
             }
-        }
 
-        saveMutation.mutate({
-            usrId: user?.usrId,
-            usrSecret: values.usrSecret?.trim(),
-            ...values,
-        });
-    };
+            return true;
+        },
+    });
 
     useEffect(() => {
         form.setFieldsValue({
@@ -70,7 +72,7 @@ export default function Profile() {
                 btnFn={() => form.submit()}
                 showBtn
                 btnProps={{
-                    isProcessing: saveMutation.isPending,
+                    loading: isProcessing,
                     className: 'primary_btn',
                 }}
             />

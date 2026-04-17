@@ -1,7 +1,7 @@
 import { Form } from 'antd';
 import { Navigate } from 'react-router-dom';
 import { ROUTES } from '../../routes';
-import { accountVerification } from '../../actions/authActions';
+import { accountVerification } from '../../actions/auth';
 import { AuthLogoComponent, OTPFormComponent } from './components';
 import { useOtpVerificationFlow } from './hooks/useOtpVerificationFlow';
 

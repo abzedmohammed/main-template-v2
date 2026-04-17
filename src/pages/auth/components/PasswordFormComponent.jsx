@@ -108,7 +108,7 @@ export default function PasswordFormComponent({
                         className={'primary_btn'}
                         text={text}
                         type="submit"
-                        isProcessing={isProcessing}
+                        loading={isProcessing}
                     />
                     {showBackBtn && (
                         <Link className="fx_center" to={ROUTES.AUTH.LOGIN}>

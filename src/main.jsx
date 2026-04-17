@@ -30,6 +30,10 @@ createRoot(document.getElementById('root')).render(
                     <Toaster
                         position="top-center"
                         reverseOrder={false}
+                        gutter={10}
+                        containerStyle={{
+                            top: 16,
+                        }}
                         toastOptions={{
                             duration: 3500,
                         }}

@@ -25,9 +25,9 @@ import { sideBarOpenFn } from '../../features/global/globalSlice';
 import { SideDrawer } from '../navigation';
 import { useTokenExpiryChecker } from '../../hooks/useTokenExpiryChecker';
 import {
-    adminFetchInAppNotification,
-    updateInAppNotification,
-} from '../../actions/adminActions';
+    fetchInAppNotificationsAction,
+    updateInAppNotificationAction,
+} from '../../actions/admin';
 const { Header, Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
     return {
@@ -55,7 +55,7 @@ export default function MainLayout() {
     const tokenModal = useTokenExpiryChecker();
 
     const { refetch } = usePaginatedQuery({
-        queryConfig: adminFetchInAppNotification,
+        queryConfig: fetchInAppNotificationsAction,
         extraParams: {
             limit: null,
         },
@@ -64,13 +64,10 @@ export default function MainLayout() {
     const processedNotifications = useRef(new Set());
 
     const allNotificationsData = useAllCachedResults({
-        baseKey: adminFetchInAppNotification.queryKey[0],
+        baseKey: fetchInAppNotificationsAction.queryKey[0],
     });
 
-    const updateMutation = useDynamicMutation({
-        mutationFn: updateInAppNotification.mutationFn,
-        invalidateQueryKeys: [adminFetchInAppNotification.queryKey],
-    });
+    const updateMutation = useDynamicMutation(updateInAppNotificationAction);
 
     const openNotification = useCallback(
         (notification) => {

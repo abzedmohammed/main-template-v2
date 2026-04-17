@@ -1,30 +1,15 @@
-import { useCallback } from 'react';
-import { Form } from 'antd';
-import { useDynamicMutation } from 'abzed-utils';
+import useFormMutation from '../../useFormMutation';
 
-export default function useAuthFormMutation(action, options = {}) {
-    const { mapValues } = options;
-    const [form] = Form.useForm();
+export default function useAuthFormMutation(actionOrConfig, options = {}) {
+    const isDirectAction =
+        typeof actionOrConfig === 'function' || Boolean(actionOrConfig?.mutationFn);
 
-    const saveMutation = useDynamicMutation(action);
+    const config = isDirectAction
+        ? {
+              action: actionOrConfig,
+              options,
+          }
+        : (actionOrConfig ?? {});
 
-    const onFinish = useCallback(
-        (values) => {
-            const payload = mapValues ? mapValues(values, { form }) : values;
-
-            if (payload === null || payload === undefined) {
-                return;
-            }
-
-            saveMutation.mutate(payload);
-        },
-        [mapValues, saveMutation, form]
-    );
-
-    return {
-        form,
-        onFinish,
-        isProcessing: saveMutation.isPending,
-        saveMutation,
-    };
+    return useFormMutation(config);
 }

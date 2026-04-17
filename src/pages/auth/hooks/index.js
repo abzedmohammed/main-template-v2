@@ -1,2 +1,2 @@
-export { default as useOtpVerificationFlow } from './useOtpVerificationFlow';
+export { useOtpVerificationFlow } from './useOtpVerificationFlow';
 export { default as useAuthFormMutation } from './useAuthFormMutation';

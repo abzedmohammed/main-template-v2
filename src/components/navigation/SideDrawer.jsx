@@ -1,7 +1,8 @@
 import { LeftCircleOutlined } from '@ant-design/icons';
-import { Drawer, Menu } from 'antd';
-import Sider from 'antd/es/layout/Sider';
+import { Drawer, Layout, Menu } from 'antd';
 import { useNavigate } from 'react-router-dom';
+
+const { Sider } = Layout;
 
 export default function SideDrawer({
     open,
@@ -18,9 +19,8 @@ export default function SideDrawer({
 
     return (
         <Drawer
-            className="primary_drawer"
+            rootClassName="primary_drawer"
             placement="left"
-            size={'default'}
             onClose={handleSidebarDrawer}
             open={open}
         >

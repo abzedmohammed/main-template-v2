@@ -3,15 +3,14 @@ import {
     AuthSideComponent,
     RegisterFormComponent,
 } from './components';
-import { registerAction } from '../../actions/authActions';
+import { registerAction } from '../../actions/auth';
 import { useAuthFormMutation } from './hooks';
 
 export default function Register() {
     const { form, onFinish, isProcessing } = useAuthFormMutation(registerAction, {
-        mapValues: (values, { form: currentForm }) => ({
-            ...values,
-            form: currentForm,
-        }),
+        onSuccess: ({ form: currentForm }) => {
+            currentForm.resetFields();
+        },
     });
 
     return (

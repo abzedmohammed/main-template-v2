@@ -4,7 +4,7 @@ import { notifyError } from '../utils';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDynamicMutation } from 'abzed-utils';
-import { adminRefreshToken } from '../actions/adminActions';
+import { adminRefreshTokenAction } from '../actions/admin';
 import { authService } from '../services/authService';
 import { tokenService } from '../services/tokenService';
 
@@ -22,7 +22,7 @@ export function useTokenExpiryChecker() {
     }, [dispatch]);
 
     const refreshMutation = useDynamicMutation({
-        mutationFn: adminRefreshToken.mutationFn,
+        mutationFn: adminRefreshTokenAction.mutationFn,
         onError: (message) => {
             if (message) {
                 notifyError(message);
@@ -31,7 +31,11 @@ export function useTokenExpiryChecker() {
             handleRedirect();
         },
         onSuccess: ({ response }) => {
-            const refreshedToken = response?.token || response?.data?.token;
+            const refreshedToken =
+                response?.token ||
+                response?.data?.token ||
+                response?.data?.result?.token ||
+                response?.data?.result?.accessToken;
             if (refreshedToken) {
                 tokenService.set(refreshedToken);
             }

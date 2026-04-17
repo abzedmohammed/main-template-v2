@@ -1,5 +1,5 @@
 import { AuthLogoComponent, ForgotPasswordFormComponent } from './components';
-import { forgotPasswordAction } from '../../actions/authActions';
+import { forgotPasswordAction } from '../../actions/auth';
 import { useAuthFormMutation } from './hooks';
 
 export default function ForgotPassword() {

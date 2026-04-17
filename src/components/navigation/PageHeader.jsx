@@ -42,9 +42,7 @@ export default function PageHeader({
             </div>
 
             {showBtn && (
-                <DynamicBtn {...btnProps} onClick={btnFn}>
-                    {btnText}
-                </DynamicBtn>
+                <DynamicBtn {...btnProps} onClick={btnFn} text={btnText} />
             )}
         </div>
     );

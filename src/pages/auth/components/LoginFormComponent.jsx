@@ -67,7 +67,7 @@ export default function LoginFormComponent({ form, onFinish, isProcessing }) {
 
                 <div className="fx_col mt-10 gap-10">
                     <DynamicBtn
-                        isProcessing={isProcessing}
+                        loading={isProcessing}
                         width={'100%'}
                         className={'primary_btn'}
                         text={'Log In'}

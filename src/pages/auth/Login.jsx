@@ -1,5 +1,5 @@
 import { AuthLogoComponent, AuthSideComponent, LoginFormComponent } from './components';
-import { loginAction } from '../../actions/authActions';
+import { loginAction } from '../../actions/auth';
 import { useAuthFormMutation } from './hooks';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';

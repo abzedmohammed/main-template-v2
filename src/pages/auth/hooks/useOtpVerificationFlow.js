@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useDynamicMutation } from 'abzed-utils';
-import { accountResendOtp } from '../../../actions/authActions';
-import { defaultTimer, notifyError, notifySuccess } from '../../../utils';
+import { accountResendOtp } from '../../../actions/auth';
+import { defaultTimer } from '../../../utils';
 
 export const useOtpVerificationFlow = ({ verifyAction }) => {
     const { userId } = useSelector((state) => state.auth);
@@ -10,20 +10,10 @@ export const useOtpVerificationFlow = ({ verifyAction }) => {
     const [otp, setOtp] = useState('');
     const [timer, setTimer] = useState(defaultTimer);
 
-    const { mutate: verifyOtp, isPending: isVerifying } = useDynamicMutation({
-        mutationFn: verifyAction.mutationFn,
-        onError: notifyError,
-        onSuccess: verifyAction.onSuccess,
-    });
-
-    const { mutate: resendOtp, isPending: isResending } = useDynamicMutation({
-        mutationFn: accountResendOtp.mutationFn,
-        onError: notifyError,
-        onSuccess: () => {
-            setTimer(defaultTimer);
-            notifySuccess('OTP sent successfully');
-        },
-    });
+    const { mutate: verifyOtp, isPending: isVerifying } =
+        useDynamicMutation(verifyAction);
+    const { mutate: resendOtp, isPending: isResending } =
+        useDynamicMutation(accountResendOtp);
 
     useEffect(() => {
         if (timer <= 0) {
@@ -42,8 +32,15 @@ export const useOtpVerificationFlow = ({ verifyAction }) => {
             return;
         }
 
-        resendOtp({ usrId: userId });
-    }, [userId, timer, isResending, resendOtp]);
+        resendOtp(
+            { usrId: userId },
+            {
+                onSuccess: () => {
+                    setTimer(defaultTimer);
+                },
+            }
+        );
+    }, [isResending, resendOtp, timer, userId]);
 
     const handleVerifyOtp = useCallback(() => {
         if (!userId) {
@@ -54,7 +51,7 @@ export const useOtpVerificationFlow = ({ verifyAction }) => {
             usrId: userId,
             usrOTP: otp,
         });
-    }, [userId, otp, verifyOtp]);
+    }, [otp, userId, verifyOtp]);
 
     return {
         userId,

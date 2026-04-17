@@ -30,7 +30,7 @@ export default function ForgotPasswordFormComponent({ form, onFinish, isProcessi
                         className={'primary_btn'}
                         text={'Send reset link'}
                         type="submit"
-                        isProcessing={isProcessing}
+                        loading={isProcessing}
                     />
 
                     <Link className="fx_center" to={ROUTES.AUTH.LOGIN}>

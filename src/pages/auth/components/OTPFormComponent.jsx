@@ -34,7 +34,7 @@ export default function OTPFormComponent({
                         <TextDynamic text={counterText} className={'cd_body_lg'} />
 
                         <DynamicBtn
-                            handleClick={handleResendOtp}
+                            onClick={handleResendOtp}
                             className={'underline plain_btn'}
                             text="Resend OTP"
                             disabled={timer > 0 || isProcessing}
@@ -42,7 +42,7 @@ export default function OTPFormComponent({
                     </div>
 
                     <DynamicBtn
-                        isProcessing={isProcessing}
+                        loading={isProcessing}
                         type="submit"
                         width={'100%'}
                         text={'Confirm'}

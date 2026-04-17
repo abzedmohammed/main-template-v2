@@ -1,5 +1,5 @@
 import { Form } from 'antd';
-import { forgotPasswordVerificationAction } from '../../actions/authActions';
+import { forgotPasswordVerificationAction } from '../../actions/auth';
 import { Navigate } from 'react-router-dom';
 import { ROUTES } from '../../routes';
 import { AuthLogoComponent, OTPFormComponent } from './components';

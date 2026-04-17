@@ -27,3 +27,84 @@ export const GoogleSvg = (props) => (
         />
     </svg>
 );
+
+export const CloseSvg = ({ color = '#53565B', ...props } = {}) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="12"
+        height="12"
+        viewBox="0 0 12 12"
+        fill="none"
+        {...props}
+    >
+        <path
+            d="M0.75 0.75L10.75 10.75M0.75 10.75L10.75 0.75"
+            stroke={color}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+export const ToastSuccessMarkSvg = (props) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="13"
+        height="13"
+        viewBox="0 0 13 13"
+        fill="none"
+        {...props}
+    >
+        <path
+            d="M10.25 3.75L5.5 8.5L3 6"
+            stroke="white"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+export const InfoSvg = (props) => (
+    <svg
+        className="fx flex-shrink-0"
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        {...props}
+    >
+        <path
+            d="M12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12C20 16.4183 16.4183 20 12 20Z"
+            fill="white"
+            fillOpacity="0.25"
+        />
+        <path
+            d="M11 10.5H11.5C11.6326 10.5 11.7598 10.5527 11.8536 10.6464C11.9473 10.7402 12 10.8674 12 11V15C12 15.1326 12.0527 15.2598 12.1464 15.3536C12.2402 15.4473 12.3674 15.5 12.5 15.5H13M12 8.5H12.01"
+            stroke="white"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+export const ToastErrorMarkSvg = (props) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="13"
+        height="13"
+        viewBox="0 0 13 13"
+        fill="none"
+        {...props}
+    >
+        <path
+            d="M6.5 3.35V7.1M6.5 9.3V9.35"
+            stroke="white"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
