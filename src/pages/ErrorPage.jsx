@@ -1,4 +1,5 @@
 import { useRouteError } from 'react-router-dom';
+import { TextDynamic } from 'abzed-utils';
 import { HomeLayout } from '../components/layout';
 
 export default function ErrorPage() {
@@ -9,12 +10,16 @@ export default function ErrorPage() {
         <>
             <HomeLayout />
             <div className="fx_col gap-5 p-10">
-                <h1 className="txt_3_5_bold">
-                    {isNotFound ? '404 Error' : 'Server Error'}
-                </h1>
-                <p className="txt_1_125">
-                    {isNotFound ? 'Page not found' : 'We are working on it...'}
-                </p>
+                <TextDynamic
+                    tagName="h1"
+                    className="txt_3_5_bold"
+                    text={isNotFound ? '404 Error' : 'Server Error'}
+                />
+                <TextDynamic
+                    tagName="p"
+                    className="txt_1_125"
+                    text={isNotFound ? 'Page not found' : 'We are working on it...'}
+                />
             </div>
         </>
     );

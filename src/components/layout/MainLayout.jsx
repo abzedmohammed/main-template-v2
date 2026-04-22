@@ -1,11 +1,8 @@
 import {
-    BankOutlined,
-    DesktopOutlined,
     LogoutOutlined,
     PieChartOutlined,
     RightCircleOutlined,
     SettingOutlined,
-    TeamOutlined,
     UserOutlined,
 } from '@ant-design/icons';
 import { Avatar, Breadcrumb, Grid, Layout, Menu, notification, theme } from 'antd';
@@ -39,9 +36,6 @@ function getItem(label, key, icon, children) {
 }
 const items = [
     getItem('Dashboard', '/dashboard', <PieChartOutlined />),
-    getItem('Events', '/events', <DesktopOutlined />),
-    getItem('Casual Users', '/casual-users', <TeamOutlined />),
-    getItem('Payments', '/payments', <BankOutlined />),
     getItem('Profile', '/profile', <SettingOutlined />),
 ];
 
@@ -185,11 +179,7 @@ export default function MainLayout() {
                 selectedKeys={selectedMenuKeys}
             />
             {isSmallScreen ? null : (
-                <Sider
-                    className="w-50!"
-                    collapsible
-                    // onCollapse={(value) => setCollapsed(value)}
-                >
+                <Sider className="w-50!" collapsible>
                     <div className="main_logo" />
                     <Menu
                         theme="dark"

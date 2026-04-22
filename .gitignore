@@ -23,6 +23,7 @@ package-lock.json
 .vscode/*
 !.vscode/extensions.json
 .idea
+.abzedsync
 .DS_Store
 *.suo
 *.ntvs*

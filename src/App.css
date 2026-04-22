@@ -5,7 +5,11 @@
 .fx_item_center,
 .fx_btwn_center,
 .fx_col,
-.fx_col_center {
+.fx_col_center,
+.fx_item_start,
+.fx_item_end,
+.fx_1,
+.fx_wrap {
     display: flex;
 }
 
@@ -31,6 +35,27 @@
 .fx_col_center {
     align-items: center;
 }
+
+.fx_item_start {
+    display: flex;
+    align-items: flex-start;
+}
+
+.fx_item_end {
+    align-items: flex-end;
+}
+
+.fx_1 {
+    flex: 1;
+    min-width: 0;
+}
+
+.fx_wrap {
+    flex-wrap: wrap;
+}
+
+/* Prefer these flex utility classes inline in JSX before adding new component-level flex declarations. */
+
 
 /* BUTTONS */
 
@@ -345,11 +370,11 @@ button:disabled {
 }
 
 .auth_main_component {
-    @apply w-full lg:w-[59.1%] h-full flex items-center justify-center pt-[6.26rem] pb-[1.88rem];
+    @apply w-full lg:w-[59.1%] bg-white h-full flex items-center justify-center pt-[6.26rem] pb-[1.88rem];
 }
 
 .auth_main_alt {
-    @apply w-full h-screen flex items-center justify-center;
+    @apply w-full h-screen bg-white flex items-center justify-center;
 }
 
 .auth_main_alt_component {

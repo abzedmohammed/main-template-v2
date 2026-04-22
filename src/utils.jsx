@@ -23,5 +23,3 @@ export const onError = (message) => {
     onErrorBase(message, errorNotification);
 };
 
-export const notifySuccess = onSuccess;
-export const notifyError = onError;

@@ -19,12 +19,14 @@ export default function OTPFormComponent({
                 <div className="w-full fx_col gap-6">
                     <div className="fx_col text-center gap-6 mb-10">
                         <TextDynamic
+                            color="#121212"
                             text={verificationText}
-                            className={'txt_1_875_bold text-[#121212]'}
+                            className={'txt_1_875_bold'}
                         />
                         <TextDynamic
+                            color="#3D3D3D"
                             text={otpText}
-                            className={'txt_9375 text-[#3D3D3D]'}
+                            className={'txt_9375'}
                         />
                     </div>
 

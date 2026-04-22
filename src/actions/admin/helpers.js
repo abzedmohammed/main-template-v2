@@ -1,5 +1,5 @@
 import axiosInstance from '../../instance';
-import { notifyError, notifySuccess } from '../../utils';
+import { onError, onSuccess } from '../../utils';
 
 export const post =
     (path, mapPayload = (data) => data) =>
@@ -55,12 +55,12 @@ export const createMutationAction = ({
         method,
         endpoint: path,
         mutationFn,
-        onError: notifyError,
+        onError: onError,
         invalidateQueryKeys: dedupeQueryKeys(invalidateQueryKeys),
         ...(successMessage
             ? {
                   onSuccess: ({ response }) => {
-                      notifySuccess(response?.message || successMessage);
+                      onSuccess(response?.message || successMessage);
                   },
               }
             : {}),

@@ -19,12 +19,14 @@ export default function RegisterFormComponent({ form, onFinish, isProcessing }) 
             <div className="w-full md:w-95 p-3 md:p-0 fx_col gap-[1.88rem] mt-5">
                 <div className="fx_col text-center gap-6">
                     <TextDynamic
+                        color="#121212"
                         text={'Welcome'}
-                        className={'txt_1_875_bold text-[#121212]'}
+                        className={'txt_1_875_bold'}
                     />
                     <TextDynamic
+                        color="#3D3D3D"
                         text={'Please fill in your personal details.'}
-                        className={'txt_9375 text-[#3D3D3D] max-w-[290px] md:max-w-full'}
+                        className={'txt_9375 max-w-[290px] md:max-w-full'}
                     />
                 </div>
 
@@ -90,6 +92,7 @@ export default function RegisterFormComponent({ form, onFinish, isProcessing }) 
                         />
 
                         <TextDynamic
+                            color="#3D3D3D"
                             text={
                                 <span>
                                     Already have an account?{' '}
@@ -101,7 +104,7 @@ export default function RegisterFormComponent({ form, onFinish, isProcessing }) 
                                     </Link>
                                 </span>
                             }
-                            className={'txt_8125_medium text-[#3D3D3D]'}
+                            className={'txt_8125_medium'}
                         />
                     </div>
                 </AntdForm>

@@ -12,7 +12,7 @@ import {
 import { adminSaveAction } from '../actions/admin';
 import { PageHeader } from '../components/navigation';
 import useFormMutation from './useFormMutation';
-import { notifyError, notifySuccess } from '../utils';
+import { onError, onSuccess } from '../utils';
 
 export default function Profile() {
     const { user } = useSelector((state) => state.auth);
@@ -26,7 +26,7 @@ export default function Profile() {
                 ...values,
             }),
             onSuccess: () => {
-                notifySuccess('Profile updated successfully');
+                onSuccess('Profile updated successfully');
             },
         },
         beforeSubmit: (values) => {
@@ -38,18 +38,18 @@ export default function Profile() {
             }
 
             if (!values.usrSecretOld?.trim()) {
-                notifyError('Current password is required');
+                onError('Current password is required');
                 return false;
             }
 
             const isPasswordValid = validatePassword(values.usrSecret || '');
             if (typeof isPasswordValid === 'string') {
-                notifyError(isPasswordValid);
+                onError(isPasswordValid);
                 return false;
             }
 
             if (values.usrSecret?.trim() !== values.usrSecretConfirm?.trim()) {
-                notifyError('Passwords do not match');
+                onError('Passwords do not match');
                 return false;
             }
 
@@ -79,7 +79,7 @@ export default function Profile() {
 
             <AntdForm form={form} handleSubmit={onFinish} formName={'event'}>
                 <div className="admin_dash_main_card">
-                    <div className="w-full fx_col gap-[1rem] mt-[1rem] px-3 lg:px-[13rem] py-[1rem]">
+                    <div className="w-full fx_col gap-4 mt-4 px-3 lg:px-52 py-4">
                         <FormInput
                             readOnly
                             required={false}

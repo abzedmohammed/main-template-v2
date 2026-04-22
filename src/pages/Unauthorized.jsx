@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
+import { TextDynamic } from 'abzed-utils';
 import { ROUTES } from '../routes';
 
 const Unauthorized = () => {
@@ -35,7 +36,11 @@ const Unauthorized = () => {
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
                 <div className="flex flex-col items-center space-y-4">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                    <p className="text-gray-600 text-sm">Loading...</p>
+                    <TextDynamic
+                        tagName="p"
+                        text="Loading..."
+                        className="text-gray-600 text-sm"
+                    />
                 </div>
             </div>
         );
@@ -45,17 +50,33 @@ const Unauthorized = () => {
         <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8 text-center">
                 <div>
-                    <h1 className="text-9xl font-bold text-red-500">403</h1>
-                    <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-                        Access Denied
-                    </h2>
-                    <p className="mt-2 text-sm text-gray-600">
-                        You don&apos;t have permission to access this page.
-                    </p>
-                    <p className="mt-1 text-xs text-gray-500">
-                        Your role:{' '}
-                        <span className="font-semibold">{userRole || 'Unknown'}</span>
-                    </p>
+                    <TextDynamic
+                        tagName="h1"
+                        text="403"
+                        className="text-9xl font-bold text-red-500"
+                    />
+                    <TextDynamic
+                        tagName="h2"
+                        text="Access Denied"
+                        className="mt-6 text-3xl font-extrabold text-gray-900"
+                    />
+                    <TextDynamic
+                        tagName="p"
+                        text="You don't have permission to access this page."
+                        className="mt-2 text-sm text-gray-600"
+                    />
+                    <TextDynamic
+                        tagName="p"
+                        className="mt-1 text-xs text-gray-500"
+                        text={
+                            <>
+                                Your role:{' '}
+                                <span className="font-semibold">
+                                    {userRole || 'Unknown'}
+                                </span>
+                            </>
+                        }
+                    />
                 </div>
 
                 <div className="mt-8 space-y-4">

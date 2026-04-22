@@ -1,7 +1,7 @@
 import { jwtDecode } from 'jwt-decode';
 import axiosInstance from '../../instance';
 import { authStateFn } from '../../features/auth/authSlice';
-import { notifyError, notifySuccess } from '../../utils';
+import { onError, onSuccess } from '../../utils';
 import { authService } from '../../services/authService';
 import { tokenService } from '../../services/tokenService';
 
@@ -72,7 +72,7 @@ export const buildSessionUser = (response = {}, token) => {
 };
 
 export const notifyOtpSent = (message = 'OTP sent successfully') => {
-    notifySuccess(message);
+    onSuccess(message);
 };
 
 export const completeAuthSession = ({
@@ -84,7 +84,7 @@ export const completeAuthSession = ({
     const token = getResponseToken(response);
 
     if (!token) {
-        notifyError('Could not verify account');
+        onError('Could not verify account');
         return false;
     }
 
@@ -93,7 +93,7 @@ export const completeAuthSession = ({
     const sessionUser = buildSessionUser(response, token);
 
     dispatch(authStateFn(sessionUser));
-    notifySuccess(getResponseMessage(response, successMessage));
+    onSuccess(getResponseMessage(response, successMessage));
     authService.redirectToDashboard({ navigate });
 
     return true;

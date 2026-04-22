@@ -1,7 +1,7 @@
 import { Form } from 'antd';
 import { AuthLogoComponent, PasswordFormComponent } from './components';
 import { validatePassword } from 'abzed-utils';
-import { notifyError } from '../../utils';
+import { onError } from '../../utils';
 import { updatePasswordAction } from '../../actions/auth';
 import { useAuthFormMutation } from './hooks';
 import { useSelector } from 'react-redux';
@@ -23,7 +23,7 @@ export default function UpdatePassword() {
             const isPasswordValid = validatePassword(values.usrEncryptedPassword);
 
             if (typeof isPasswordValid === 'string') {
-                notifyError(isPasswordValid);
+                onError(isPasswordValid);
                 return false;
             }
 
@@ -31,7 +31,7 @@ export default function UpdatePassword() {
                 values.usrEncryptedPassword.trim() !==
                 values.usrEncryptedPasswordAlt.trim()
             ) {
-                notifyError('Passwords do not match');
+                onError('Passwords do not match');
                 return false;
             }
 

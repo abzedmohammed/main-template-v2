@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Modal } from 'antd';
-import { notifyError } from '../utils';
+import { onError } from '../utils';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch, useSelector } from 'react-redux';
-import { useDynamicMutation } from 'abzed-utils';
+import { TextDynamic, useDynamicMutation } from 'abzed-utils';
 import { adminRefreshTokenAction } from '../actions/admin';
 import { authService } from '../services/authService';
 import { tokenService } from '../services/tokenService';
@@ -25,9 +25,9 @@ export function useTokenExpiryChecker() {
         mutationFn: adminRefreshTokenAction.mutationFn,
         onError: (message) => {
             if (message) {
-                notifyError(message);
+                onError(message);
             }
-            notifyError('A new session is required. You are being redirected to login.');
+            onError('A new session is required. You are being redirected to login.');
             handleRedirect();
         },
         onSuccess: ({ response }) => {
@@ -114,7 +114,6 @@ export function useTokenExpiryChecker() {
     return (
         <Modal
             open={isModalVisible}
-            // open
             title="Session Expired"
             closable={false}
             centered
@@ -129,7 +128,11 @@ export function useTokenExpiryChecker() {
             onCancel={handleRedirect}
             onOk={handleRefresh}
         >
-            <p className="mb-5">Your session has expired.</p>
+            <TextDynamic
+                tagName="p"
+                text="Your session has expired."
+                className="mb-5"
+            />
         </Modal>
     );
 }

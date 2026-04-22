@@ -15,12 +15,14 @@ export default function LoginFormComponent({ form, onFinish, isProcessing }) {
         <div className="p-3 md:p-0 fx_col gap-5 mt-5 md:mt-[6.69rem]">
             <div className="fx_col text-center gap-6 mb-10">
                 <TextDynamic
+                    color="#121212"
                     text={'Nice to see you again'}
-                    className={'txt_1_875_bold text-[#121212]'}
+                    className={'txt_1_875_bold'}
                 />
                 <TextDynamic
+                    color="#3D3D3D"
                     text={'Please fill in your details to access your account'}
-                    className={'txt_9375 text-[#3D3D3D]'}
+                    className={'txt_9375'}
                 />
             </div>
 
@@ -53,12 +55,13 @@ export default function LoginFormComponent({ form, onFinish, isProcessing }) {
                         <Checkbox className="auth_checkbox">
                             <TextDynamic
                                 text={'Remember me'}
-                                className={'txt_8125_medium text-[#3D3D3D]'}
+                                className={'txt_8125_medium'}
+                                color="#3D3D3D"
                             />
                         </Checkbox>
                         <Link
                             to={ROUTES.AUTH.FORGOT_PASSWORD}
-                            className="txt_8125_medium text-[#3D3D3D]!"
+                            className="txt_8125_medium"
                         >
                             Forgot Password?
                         </Link>
@@ -86,7 +89,8 @@ export default function LoginFormComponent({ form, onFinish, isProcessing }) {
                                 </Link>
                             </span>
                         }
-                        className={'txt_8125_medium text-[#3D3D3D]'}
+                        className={'txt_8125_medium'}
+                        color="#3D3D3D"
                     />
                 </div>
             </AntdForm>

@@ -23,10 +23,15 @@ export default function PasswordFormComponent({
         <div className="p-3 md:p-0 fx_col gap-[1.88rem] mt-5 md:mt-[5.19rem]">
             <div className="fx_col text-center gap-6">
                 <TextDynamic
+                    color="#121212"
                     text={headerText}
-                    className={'txt_1_875_bold text-[#121212]'}
+                    className={'txt_1_875_bold'}
                 />
-                <TextDynamic text={subHeaderText} className={'txt_9375 text-[#3D3D3D]'} />
+                <TextDynamic
+                    color="#3D3D3D"
+                    text={subHeaderText}
+                    className={'txt_9375'}
+                />
             </div>
 
             <AntdForm form={form} handleSubmit={onFinish} formName={'login'}>
@@ -115,8 +120,9 @@ export default function PasswordFormComponent({
                             <div className="fx_item_center gap-2.5">
                                 <span aria-hidden="true">&lt;</span>
                                 <TextDynamic
+                                    color="#3D3D3D"
                                     text={'Back to Log in'}
-                                    className={'txt_8125_semi text-[#3D3D3D]'}
+                                    className={'txt_8125_semi'}
                                 />
                             </div>
                         </Link>
