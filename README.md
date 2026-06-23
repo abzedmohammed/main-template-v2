@@ -1,4 +1,4 @@
-# Main Template V2 (React + Vite)
+# abzed-app
 
 Production-ready React starter with:
 

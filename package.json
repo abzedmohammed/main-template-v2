@@ -1,7 +1,7 @@
 {
-    "name": "main_template",
-    "private": true,
-    "version": "3.0.0",
+    "name": "abzed-app",
+    "private": false,
+    "version": "3.0.1",
     "type": "module",
     "scripts": {
         "dev": "vite",
