@@ -1,48 +1,20 @@
 import { createHashRouter } from 'react-router-dom';
 import { getRoutesForRole } from './roleBasedRoutes';
-import { Unauthorized } from '../pages';
+import { ROUTES } from './paths';
+import { NotFound, Unauthorized } from '../pages';
 
-const unauthorizedElement = <Unauthorized />;
+// Append the shared fallback routes (unauthorized page + 404 catch-all) to any
+// route tree, so every router variant handles them identically.
+const withFallbacks = (routes) => [
+    ...routes,
+    { path: ROUTES.UNAUTHORIZED, element: <Unauthorized /> },
+    { path: ROUTES.NOT_FOUND, element: <NotFound /> },
+    { path: '*', element: <NotFound /> },
+];
 
-// Create a function to generate router based on user role
-export const createRoleBasedRouter = (userRole) => {
-    const allowedRoutes = getRoutesForRole(userRole);
+// Router scoped to a signed-in user's role.
+export const createRoleBasedRouter = (userRole) =>
+    createHashRouter(withFallbacks(getRoutesForRole(userRole)));
 
-    // Add the unauthorized route to all routers
-    const routesWithUnauthorized = [
-        ...allowedRoutes,
-        {
-            path: '/404',
-            element: unauthorizedElement,
-        },
-        {
-            path: '/unauthorized',
-            element: unauthorizedElement,
-        },
-        {
-            path: '*',
-            element: unauthorizedElement,
-        },
-    ];
-
-    return createHashRouter(routesWithUnauthorized);
-};
-
-// Default router for when user role is not available
-const normalUser = getRoutesForRole();
-
-export const router = createHashRouter([
-    ...normalUser,
-    {
-        path: '/404',
-        element: unauthorizedElement,
-    },
-    {
-        path: '/unauthorized',
-        element: unauthorizedElement,
-    },
-    {
-        path: '*',
-        element: unauthorizedElement,
-    },
-]);
+// Default router for signed-out users (public auth + home routes).
+export const router = createHashRouter(withFallbacks(getRoutesForRole()));

@@ -1,31 +1,20 @@
 import { MainLayout } from '../components/layout';
 import { ErrorPage, Profile } from '../pages';
 import { AdminDashboard } from '../pages/admin';
+import { ROUTES } from './paths';
 import ProtectedRoute from './ProtectedRoute';
 
 export const adminRoutes = [
     {
-        path: '',
-        element: <ProtectedRoute />,
+        element: <ProtectedRoute allowedRoles={['ADMIN']} />,
         errorElement: <ErrorPage />,
         children: [
             {
-                path: '',
                 element: <MainLayout />,
-                errorElement: <ErrorPage />,
                 children: [
-                    {
-                        path: '',
-                        element: <AdminDashboard />,
-                    },
-                    {
-                        path: 'dashboard',
-                        element: <AdminDashboard />,
-                    },
-                    {
-                        path: 'profile',
-                        element: <Profile />,
-                    },
+                    { index: true, element: <AdminDashboard /> },
+                    { path: ROUTES.DASHBOARD, element: <AdminDashboard /> },
+                    { path: ROUTES.PROFILE, element: <Profile /> },
                 ],
             },
         ],

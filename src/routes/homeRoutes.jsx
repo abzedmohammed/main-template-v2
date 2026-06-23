@@ -4,14 +4,8 @@ import { Login } from '../pages/auth';
 
 export const homeRoutes = [
     {
-        path: '',
         element: <HomeLayout />,
         errorElement: <ErrorPage />,
-        children: [
-            {
-                path: '',
-                element: <Login />,
-            },
-        ],
+        children: [{ index: true, element: <Login /> }],
     },
 ];

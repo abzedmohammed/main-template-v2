@@ -11,43 +11,34 @@ import {
     RegistrationVerificationEmail,
     UpdatePassword,
 } from '../pages/auth';
+import { ROUTES } from './paths';
 
 export const authRoutes = [
     {
-        path: 'auth',
         element: <HomeLayout />,
         errorElement: <ErrorPage />,
         children: [
-            { path: 'login', element: <Login /> },
+            { path: ROUTES.AUTH.LOGIN, element: <Login /> },
             {
-                path: 'login/otp-verification',
+                path: ROUTES.AUTH.LOGIN_OTP_VERIFICATION,
                 element: <LoginOTPVerification />,
             },
+            { path: ROUTES.AUTH.REGISTER_OPTIONS, element: <RegisterOptions /> },
+            { path: ROUTES.AUTH.REGISTER, element: <Register /> },
+            { path: ROUTES.AUTH.FORGOT_PASSWORD, element: <ForgotPassword /> },
             {
-                path: 'registration/choose',
-                element: <RegisterOptions />,
-            },
-            { path: 'register', element: <Register /> },
-            {
-                path: 'forgot-password',
-                element: <ForgotPassword />,
-            },
-            {
-                path: 'forgot-password/verification',
+                path: ROUTES.AUTH.FORGOT_PASSWORD_VERIFICATION,
                 element: <ForgotPasswordVerification />,
             },
             {
-                path: 'registration/verification',
+                path: ROUTES.AUTH.REGISTRATION_VERIFICATION,
                 element: <RegistrationVerification />,
             },
             {
-                path: 'registration/verification/email',
+                path: ROUTES.AUTH.REGISTRATION_VERIFICATION_EMAIL,
                 element: <RegistrationVerificationEmail />,
             },
-            {
-                path: 'update-password',
-                element: <UpdatePassword />,
-            },
+            { path: ROUTES.AUTH.UPDATE_PASSWORD, element: <UpdatePassword /> },
         ],
     },
 ];

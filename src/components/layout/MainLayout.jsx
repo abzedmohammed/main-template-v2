@@ -19,7 +19,7 @@ import {
     defaultDropdownOverlayStyle,
 } from 'abzed-utils';
 import { sideBarOpenFn } from '../../features/global/globalSlice';
-import { SideDrawer } from '../navigation';
+import { NotificationBellButton, SideDrawer } from '../navigation';
 import { useTokenExpiryChecker } from '../../hooks/useTokenExpiryChecker';
 import {
     fetchInAppNotificationsAction,
@@ -243,7 +243,8 @@ const MainLayoutHeader = ({
                     <RightCircleOutlined className="text-[1.7rem]" />
                 </button>
             </div>
-            <div className="ml-auto">
+            <div className="ml-auto fx_item_center gap-4">
+                <NotificationBellButton />
                 <PrimaryDropdown
                     items={avatarItems}
                     triggerButton={

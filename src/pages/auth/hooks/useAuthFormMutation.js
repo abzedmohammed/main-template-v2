@@ -1,4 +1,4 @@
-import useFormMutation from '../../useFormMutation';
+import { useFormMutation } from '../../../hooks';
 
 export default function useAuthFormMutation(actionOrConfig, options = {}) {
     const isDirectAction =

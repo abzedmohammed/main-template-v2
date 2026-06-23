@@ -9,6 +9,9 @@ vi.mock('./authRoutes', () => ({
 vi.mock('./homeRoutes', () => ({
     homeRoutes: [{ path: '/', element: 'home' }],
 }));
+vi.mock('../pages', () => ({
+    Unauthorized: 'unauthorized',
+}));
 
 const { getRoutesForRole, ROLE_ROUTE_MAPPING } = await import('./roleBasedRoutes');
 
@@ -21,14 +24,18 @@ describe('getRoutesForRole', () => {
         expect(getRoutesForRole('admin')).toEqual(ROLE_ROUTE_MAPPING.ADMIN);
     });
 
-    it('falls back to auth + home routes when no role is provided', () => {
+    it('returns public (auth + home) routes when not authenticated', () => {
         expect(getRoutesForRole()).toEqual([
             { path: '/auth/login', element: 'login' },
             { path: '/', element: 'home' },
         ]);
     });
 
-    it('falls back to auth + home routes for unknown roles', () => {
-        expect(getRoutesForRole('SUPPORT')).toEqual(getRoutesForRole());
+    it('locks out authenticated users whose role has no route tree', () => {
+        const routes = getRoutesForRole('SUPPORT');
+
+        expect(routes).toHaveLength(1);
+        expect(routes[0].path).toBe('*');
+        expect(routes).not.toEqual(getRoutesForRole());
     });
 });

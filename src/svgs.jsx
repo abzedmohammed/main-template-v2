@@ -1,4 +1,4 @@
-export const GoogleSvg = ({props, color = '#53565B'}) => (
+export const GoogleSvg = ({ props, color = '#53565B' }) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         width={15}
@@ -47,7 +47,7 @@ export const CloseSvg = ({ color = '#53565B', ...props } = {}) => (
     </svg>
 );
 
-export const ToastSuccessMarkSvg = ({color='white',...props}) => (
+export const ToastSuccessMarkSvg = ({ color = 'white', ...props }) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         width="13"
@@ -66,7 +66,7 @@ export const ToastSuccessMarkSvg = ({color='white',...props}) => (
     </svg>
 );
 
-export const InfoSvg = ({color = 'white', ...props}) => (
+export const InfoSvg = ({ color = 'white', ...props }) => (
     <svg
         className="fx flex-shrink-0"
         xmlns="http://www.w3.org/2000/svg"
@@ -90,7 +90,7 @@ export const InfoSvg = ({color = 'white', ...props}) => (
     </svg>
 );
 
-export const ToastErrorMarkSvg = ({color = 'white', ...props}) => (
+export const ToastErrorMarkSvg = ({ color = 'white', ...props }) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         width="13"
@@ -103,6 +103,25 @@ export const ToastErrorMarkSvg = ({color = 'white', ...props}) => (
             d="M6.5 3.35V7.1M6.5 9.3V9.35"
             stroke={color}
             strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+export const BellSvg = ({ color = '#53565B', ...props } = {}) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
+        fill="none"
+        {...props}
+    >
+        <path
+            d="M10 2.5a4.5 4.5 0 0 0-4.5 4.5c0 2.4-.6 4-1.3 5-.3.5 0 1.1.6 1.1h10.4c.6 0 .9-.6.6-1.1-.7-1-1.3-2.6-1.3-5A4.5 4.5 0 0 0 10 2.5ZM8.25 16a1.75 1.75 0 0 0 3.5 0"
+            stroke={color}
+            strokeWidth="1.4"
             strokeLinecap="round"
             strokeLinejoin="round"
         />

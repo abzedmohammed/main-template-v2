@@ -11,7 +11,7 @@ import {
 } from 'abzed-utils';
 import { adminSaveAction } from '../actions/admin';
 import { PageHeader } from '../components/navigation';
-import useFormMutation from './useFormMutation';
+import { useFormMutation } from '../hooks';
 import { onError, onSuccess } from '../utils';
 
 export default function Profile() {

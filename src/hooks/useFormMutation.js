@@ -34,13 +34,7 @@ export default function useFormMutation({
 
             if (defaultOnSuccess || customOnSuccess) {
                 nextMutationOptions.onSuccess = (data, variables, context) => {
-                    const result = {
-                        data,
-                        variables,
-                        context,
-                        payload,
-                        form,
-                    };
+                    const result = { data, variables, context, payload, form };
 
                     defaultOnSuccess?.(result);
                     customOnSuccess?.(result);
@@ -49,13 +43,7 @@ export default function useFormMutation({
 
             if (defaultOnError || customOnError) {
                 nextMutationOptions.onError = (error, variables, context) => {
-                    const result = {
-                        error,
-                        variables,
-                        context,
-                        payload,
-                        form,
-                    };
+                    const result = { error, variables, context, payload, form };
 
                     defaultOnError?.(result);
                     customOnError?.(result);

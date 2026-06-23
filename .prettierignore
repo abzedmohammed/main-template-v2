@@ -8,3 +8,10 @@ package-lock.json
 *.min.js
 *.min.css
 *.pdf
+
+# CI / deploy pipeline — hand-formatted, not prettier-managed
+.gitlab-ci.yml
+Dockerfile
+nginx.conf
+.dockerignore
+*.sh

@@ -11,6 +11,34 @@ export const logoutUrl = import.meta.env.VITE_LOGOUT_URL;
 export const logo = projectLogo;
 export const defaultTimer = Number.parseInt(import.meta.env.VITE_DEFAULT_TIMER, 10) || 10;
 
+// Session timing — overridable via env, with sensible defaults. Consumed by
+// useTokenExpiryChecker + tokenService.getSessionStatus.
+const readEnvNumber = (key, fallback) => {
+    const value = Number.parseInt(import.meta.env[key], 10);
+    return Number.isFinite(value) ? value : fallback;
+};
+
+export const sessionIdleTimeoutMinutes = readEnvNumber(
+    'VITE_SESSION_IDLE_TIMEOUT_MINUTES',
+    15
+);
+export const sessionMaxDurationMinutes = readEnvNumber(
+    'VITE_SESSION_MAX_DURATION_MINUTES',
+    60
+);
+export const sessionAbsoluteMaxMinutes = readEnvNumber(
+    'VITE_SESSION_ABSOLUTE_MAX_MINUTES',
+    240
+);
+export const sessionWarningCountdownSeconds = readEnvNumber(
+    'VITE_SESSION_WARNING_COUNTDOWN_SECONDS',
+    60
+);
+export const sessionExpiryCountdownSeconds = readEnvNumber(
+    'VITE_SESSION_EXPIRY_COUNTDOWN_SECONDS',
+    30
+);
+
 export const onSuccess = (message) => {
     onSuccessBase(message, successNotification);
 };
@@ -22,4 +50,3 @@ export const onInfo = (message) => {
 export const onError = (message) => {
     onErrorBase(message, errorNotification);
 };
-

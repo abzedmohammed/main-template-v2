@@ -1,0 +1,46 @@
+node_modules
+dist
+.git
+.gitignore
+.gitattributes
+
+# env files — the only one the image needs is the CI-generated .env.production
+# (VITE_* values baked at build time). Never bake .env.local into the image.
+.env
+.env.*
+!.env.example
+!.env.production
+
+# editor / IDE
+.vscode
+.idea
+*.swp
+
+# build / debug output
+*.log
+coverage
+.nyc_output
+
+# claude / tooling sidecars (gitignored anyway)
+.claude
+.abzedsync
+project-sync
+
+# misc local artifacts
+.cache
+.tmp
+*.tgz
+*.tar.gz
+Thumbs.db
+.DS_Store
+
+# tests (image doesn't need them)
+**/__tests__
+**/*.test.js
+**/*.test.jsx
+**/*.test.ts
+**/*.test.tsx
+
+# docs / readme
+docs
+README.md

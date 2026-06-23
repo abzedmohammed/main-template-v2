@@ -1,7 +1,9 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
 import { FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+// Use the ESM storage build — `redux-persist/lib/storage` is CommonJS and its
+// default export mis-interops under Vite/Rolldown (storage.getItem undefined).
+import storage from 'redux-persist/es/storage';
 import authReducer from '../features/auth/authSlice';
 import globalReducer from '../features/global/globalSlice';
 

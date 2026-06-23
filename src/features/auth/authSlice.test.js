@@ -1,8 +1,4 @@
-import authReducer, {
-    authStateFn,
-    logoutStateFn,
-    userIdStateFn,
-} from './authSlice';
+import authReducer, { authStateFn, logoutStateFn, userIdStateFn } from './authSlice';
 
 const initialState = {
     isActive: false,

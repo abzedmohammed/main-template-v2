@@ -1,0 +1,297 @@
+# ============================================================
+# Frontend — GitLab CI/CD (Vite + React)
+# Place at repo root alongside package.json + Dockerfile + nginx.conf.
+#
+# Branch → environment mapping
+#   develop → test  → $VITE_CI_TEST_URL
+#   master  → prod  → $VITE_CI_PROD_URL
+#
+# ── Starting a new project from the template? ──────────────────────────────
+# All per-project config lives in .env (VITE_*). Set it there and push to
+# GitLab with `./env-upload.sh`. Those uploaded CI/CD variables override the
+# fallback defaults in `variables:` below — you normally edit nothing here.
+#
+# Adding an APP variable: add VITE_FOO to .env + upload it — the build bakes it
+# automatically. Adding a DEPLOY/infra variable: name it VITE_CI_FOO — the whole
+# VITE_CI_ namespace is auto-excluded from the bundle (no list to maintain).
+#
+# Required CI/CD variables (push with env-upload.sh):
+#   App (per env scope): every app VITE_* (VITE_API_URL, …)
+#   Deploy config (scope=*): VITE_CI_APP_NAME, VITE_CI_DEPLOY_NETWORK,
+#     VITE_CI_FRONTEND_PORT, VITE_CI_SONAR_PROJECT_KEY/NAME, VITE_CI_VPN_PING_HOST,
+#     VITE_CI_TEST_URL (test scope), VITE_CI_PROD_URL (prod scope)
+#   Deploy secrets (scope=*, unless noted):
+#     VPN:  OVPN_CONFIG (File), OVPN_USER, OVPN_PASS, OVPN_KEY_PASS
+#     Test SSH:  SSH_PRIVATE_KEY_B64 (base64), DEPLOY_USER, DEPLOY_HOST
+#     Prod SSH:  ICOLO_SSH_PRIVATE_KEY_B64 (base64), ICOLO_DEPLOY_USER, ICOLO_DEPLOY_HOST
+#   SonarQube (optional): SONAR_HOST_URL, SONAR_TOKEN
+# ============================================================
+
+stages:
+  - build
+  - test
+  - build-sonar
+  - build-image
+  - deploy-test
+  - deploy-prod
+
+variables:
+  # ┌──────────────────────────────────────────────────────────────────┐
+  # │ Per-project config lives in .env (VITE_*) and is pushed to GitLab  │
+  # │ CI/CD with env-upload.sh — those uploaded values OVERRIDE the      │
+  # │ fallback defaults below. Edit .env, not this block.                │
+  # └──────────────────────────────────────────────────────────────────┘
+  VITE_CI_APP_NAME:          app-frontend          # container name base
+  VITE_CI_DEPLOY_NETWORK:    app-net               # docker network on the server
+  VITE_CI_FRONTEND_PORT:     "3010"                # host port on the deploy server
+  VITE_CI_SONAR_PROJECT_KEY:  app-frontend
+  VITE_CI_SONAR_PROJECT_NAME: "App Frontend"
+  VITE_CI_TEST_URL:          "https://test.example.com/"
+  VITE_CI_PROD_URL:          "https://example.com/"
+  VITE_CI_VPN_PING_HOST:     "10.10.40.4"          # internal host pinged to confirm VPN is up
+  # ── Generic (rarely changed) ──
+  FRONTEND_CONTAINER:     "$VITE_CI_APP_NAME"
+  FRONTEND_IMAGE:         "$CI_REGISTRY_IMAGE"
+  DOCKER_TAG:             "$CI_COMMIT_SHORT_SHA"
+  FRONTEND_INTERNAL_PORT: "80"
+  NPM_CONFIG_CACHE:       "$CI_PROJECT_DIR/.npm"
+  DOCKER_HOST:            tcp://docker:2375
+  DOCKER_TLS_CERTDIR:     ""
+
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - .npm/
+    - node_modules/
+
+# ─── Build (Vite compile smoke) ───────────────────────────────────────────────
+build-compile:
+  stage: build
+  image: node:20-alpine
+  rules:
+    - when: on_success
+  script:
+    - npm install --no-audit --no-fund
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 day
+
+# ─── Lint ─────────────────────────────────────────────────────────────────────
+lint:
+  stage: test
+  image: node:20-alpine
+  rules:
+    - when: on_success
+  script:
+    - npm install --no-audit --no-fund
+    - npm run lint
+  allow_failure: false
+
+# ─── Unit tests (Vitest) ──────────────────────────────────────────────────────
+unit-tests:
+  stage: test
+  image: node:20-alpine
+  rules:
+    - when: on_success
+  script:
+    - npm install --no-audit --no-fund
+    - npm run test
+  allow_failure: false
+
+# ─── SonarQube Analysis (optional) ────────────────────────────────────────────
+sonar-analysis:
+  stage: build-sonar
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+    entrypoint: [""]
+  allow_failure: true
+  rules:
+    - if: $SONAR_HOST_URL == null
+      when: never
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_BRANCH == 'master'
+    - if: $CI_COMMIT_BRANCH == 'develop'
+  variables:
+    GIT_DEPTH: "0"
+    SONAR_USER_HOME: "$CI_PROJECT_DIR/.sonar"
+  cache:
+    key: sonar-cache-$CI_COMMIT_REF_SLUG
+    paths:
+      - .sonar/cache
+  script:
+    - sonar-scanner
+        -Dsonar.projectKey=$VITE_CI_SONAR_PROJECT_KEY
+        -Dsonar.projectName="$VITE_CI_SONAR_PROJECT_NAME"
+        -Dsonar.sources=src
+        -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.test.js,**/*.test.jsx
+        -Dsonar.host.url=$SONAR_HOST_URL
+        -Dsonar.token=$SONAR_TOKEN
+
+# ─── Shared docker build template ─────────────────────────────────────────────
+# App VITE_* CI/CD variables are dumped into .env.production so Vite bakes them
+# at build time. The entire VITE_CI_ namespace (deploy config + tooling/secrets)
+# is excluded by one rule, so it never ships to the browser — and new deploy
+# vars just need the VITE_CI_ prefix.
+.docker-build: &docker-build
+  stage: build-image
+  image: docker:24
+  tags:
+    - docker
+  services:
+    - name: docker:24-dind
+      command: ["--tls=false"]
+  variables:
+    DOCKER_HOST:        tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    # Bake every app VITE_* into the bundle; the whole VITE_CI_ namespace
+    # (deploy config + tooling/secrets) is excluded so it never reaches the browser.
+    - env | grep '^VITE_' | grep -v '^VITE_CI_' > .env.production || true
+    - echo "Baking $(wc -l < .env.production) app VITE_* variables into the bundle."
+    - docker build -t "$FRONTEND_IMAGE:$DOCKER_TAG" -t "$FRONTEND_IMAGE:$IMAGE_FLOATING_TAG" .
+    - docker push "$FRONTEND_IMAGE:$DOCKER_TAG"
+    - docker push "$FRONTEND_IMAGE:$IMAGE_FLOATING_TAG"
+
+build-image-test:
+  <<: *docker-build
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'develop'
+  environment:
+    name: test
+  variables:
+    IMAGE_FLOATING_TAG: test-latest
+
+build-image-prod:
+  <<: *docker-build
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master'
+  environment:
+    name: production
+  variables:
+    IMAGE_FLOATING_TAG: latest
+
+# ─── Shared VPN + SSH setup ───────────────────────────────────────────────────
+.setup-vpn-ssh: &setup-vpn-ssh
+  - apk add --no-cache openssh-client openvpn
+  - cp "$OVPN_CONFIG" /tmp/client.ovpn
+  - printf '%s\n%s\n' "$OVPN_USER" "$OVPN_PASS" > /tmp/vpn-pass.txt && chmod 600 /tmp/vpn-pass.txt
+  - printf '%s\n' "$OVPN_KEY_PASS" > /tmp/key-pass.txt && chmod 600 /tmp/key-pass.txt
+  - openvpn --config /tmp/client.ovpn --auth-user-pass /tmp/vpn-pass.txt --askpass /tmp/key-pass.txt --daemon --log /tmp/openvpn.log
+  - |
+    for i in $(seq 1 12); do
+      sleep 5
+      ping -c 1 -W 2 "$VITE_CI_VPN_PING_HOST" >/dev/null 2>&1 && break
+      if [ "$i" = "12" ]; then cat /tmp/openvpn.log; echo "VPN failed"; exit 1; fi
+    done
+  - eval "$(ssh-agent -s)"
+  - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+  - |
+    if printf '%s' "$DEPLOY_KEY_B64" | grep -q 'BEGIN.*PRIVATE KEY'; then
+      echo "ERROR: DEPLOY_KEY_B64 contains raw key — paste base64-encoded version."
+      exit 1
+    fi
+    echo "$DEPLOY_KEY_B64" | base64 -d > ~/.ssh/id_deploy
+    tail -c1 ~/.ssh/id_deploy | od -An -tx1 | grep -q '0a' || printf '\n' >> ~/.ssh/id_deploy
+    chmod 600 ~/.ssh/id_deploy
+  - ssh-add ~/.ssh/id_deploy
+  - printf 'Host *\n  StrictHostKeyChecking no\n' > ~/.ssh/config
+
+# ─── Deploy to Test ───────────────────────────────────────────────────────────
+deploy-test:
+  stage: deploy-test
+  image: alpine:3
+  resource_group: ${VITE_CI_APP_NAME}-test
+  needs:
+    - build-image-test
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'develop'
+    - when: never
+  environment:
+    name: test
+    url: $VITE_CI_TEST_URL
+  variables:
+    DEPLOY_KEY_B64: "$SSH_PRIVATE_KEY_B64"
+  before_script:
+    - |
+      MISSING=""
+      for v in OVPN_CONFIG OVPN_USER OVPN_PASS OVPN_KEY_PASS \
+               DEPLOY_USER DEPLOY_HOST SSH_PRIVATE_KEY_B64; do
+        eval "val=\$$v"
+        [ -z "$val" ] && MISSING="$MISSING $v"
+      done
+      if [ -n "$MISSING" ]; then
+        echo "ERROR: missing CI/CD variables:$MISSING"
+        echo "Add them in GitLab → Settings → CI/CD → Variables"
+        exit 1
+      fi
+    - *setup-vpn-ssh
+  script:
+    - |
+      echo "Deploying $FRONTEND_CONTAINER $DOCKER_TAG → $DEPLOY_USER@$DEPLOY_HOST"
+
+      ssh "$DEPLOY_USER@$DEPLOY_HOST" bash -s <<EOF
+      set -e
+      docker network inspect $VITE_CI_DEPLOY_NETWORK >/dev/null 2>&1 || docker network create $VITE_CI_DEPLOY_NETWORK
+      echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+      docker pull "$FRONTEND_IMAGE:$DOCKER_TAG"
+      docker rm -f $FRONTEND_CONTAINER 2>/dev/null || true
+      while docker ps -a --format '{{.Names}}' | grep -qx $FRONTEND_CONTAINER; do sleep 1; done
+      docker run -d --name $FRONTEND_CONTAINER \
+        --restart unless-stopped \
+        --network $VITE_CI_DEPLOY_NETWORK \
+        -p $VITE_CI_FRONTEND_PORT:$FRONTEND_INTERNAL_PORT \
+        "$FRONTEND_IMAGE:$DOCKER_TAG"
+      EOF
+
+# ─── Deploy to Production ─────────────────────────────────────────────────────
+deploy-prod:
+  stage: deploy-prod
+  image: alpine:3
+  resource_group: ${VITE_CI_APP_NAME}-prod
+  needs:
+    - build-image-prod
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master'
+    - when: never
+  environment:
+    name: production
+    url: $VITE_CI_PROD_URL
+  variables:
+    DEPLOY_KEY_B64: "$ICOLO_SSH_PRIVATE_KEY_B64"
+  before_script:
+    - |
+      MISSING=""
+      for v in OVPN_CONFIG OVPN_USER OVPN_PASS OVPN_KEY_PASS \
+               ICOLO_DEPLOY_HOST ICOLO_DEPLOY_USER ICOLO_SSH_PRIVATE_KEY_B64; do
+        eval "val=\$$v"
+        [ -z "$val" ] && MISSING="$MISSING $v"
+      done
+      if [ -n "$MISSING" ]; then
+        echo "ERROR: missing CI/CD variables:$MISSING"
+        exit 1
+      fi
+    - *setup-vpn-ssh
+  script:
+    - |
+      echo "=========================================="
+      echo " PRODUCTION DEPLOY — $FRONTEND_CONTAINER"
+      echo " Image:  $FRONTEND_IMAGE:$DOCKER_TAG"
+      echo " Server: $ICOLO_DEPLOY_USER@$ICOLO_DEPLOY_HOST"
+      echo "=========================================="
+
+      ssh "$ICOLO_DEPLOY_USER@$ICOLO_DEPLOY_HOST" bash -s <<EOF
+      set -e
+      docker network inspect $VITE_CI_DEPLOY_NETWORK >/dev/null 2>&1 || docker network create $VITE_CI_DEPLOY_NETWORK
+      echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+      docker pull "$FRONTEND_IMAGE:$DOCKER_TAG"
+      docker rm -f $FRONTEND_CONTAINER 2>/dev/null || true
+      while docker ps -a --format '{{.Names}}' | grep -qx $FRONTEND_CONTAINER; do sleep 1; done
+      docker run -d --name $FRONTEND_CONTAINER \
+        --restart unless-stopped \
+        --network $VITE_CI_DEPLOY_NETWORK \
+        -p $VITE_CI_FRONTEND_PORT:$FRONTEND_INTERNAL_PORT \
+        "$FRONTEND_IMAGE:$DOCKER_TAG"
+      EOF
