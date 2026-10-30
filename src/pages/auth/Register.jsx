@@ -1,33 +1,26 @@
-import {
-    AuthLogoComponent,
-    AuthSideComponent,
-    RegisterFormComponent,
-} from './components';
+import { RegisterFormComponent } from './components';
 import { registerAction } from '../../actions/auth';
-import { useAuthFormMutation } from './hooks';
+import { useFormMutation } from '../../hooks';
 
 export default function Register() {
-    const { form, onFinish, isProcessing } = useAuthFormMutation(registerAction, {
-        onSuccess: ({ form: currentForm }) => {
+    const { form, onFinish, isProcessing } = useFormMutation(registerAction, {
+        mapValues: (values) => {
+            const payload = { ...values };
+            delete payload.confirmPassword;
+            return payload;
+        },
+        successToast: ({ form: currentForm }) => {
             currentForm.resetFields();
         },
     });
 
     return (
-        <div className="auth_main">
-            <div className="auth_side_component">
-                <AuthSideComponent />
-            </div>
-
-            <div className="auth_main_component">
-                <AuthLogoComponent>
-                    <RegisterFormComponent
-                        form={form}
-                        onFinish={onFinish}
-                        isProcessing={isProcessing}
-                    />
-                </AuthLogoComponent>
-            </div>
-        </div>
+        <main className="auth_card">
+            <RegisterFormComponent
+                form={form}
+                onFinish={onFinish}
+                isProcessing={isProcessing}
+            />
+        </main>
     );
 }

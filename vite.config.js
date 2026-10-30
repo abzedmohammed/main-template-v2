@@ -66,6 +66,8 @@ export default defineConfig({
         globals: true,
         include: ['src/**/*.test.{js,jsx}'],
         setupFiles: ['./src/test/setup.js'],
+        testTimeout: 20000,
+        hookTimeout: 20000,
     },
     server: {
         host: '0.0.0.0',

@@ -12,7 +12,6 @@ import {
     sessionMaxDurationMinutes,
     sessionWarningCountdownSeconds,
 } from '../utils';
-import SessionLockScreen from '../components/SessionLockScreen';
 
 const ACTIVITY_EVENTS = [
     'pointerdown',
@@ -336,18 +335,6 @@ export function useTokenExpiryChecker() {
         return null;
     }
 
-    if (mode === MODE_LOCKED) {
-        return (
-            <SessionLockScreen
-                onUnlocked={() => {
-                    setMode(null);
-                    setCountdown(0);
-                    setExpiredReason(null);
-                }}
-            />
-        );
-    }
-
     const isForced = mode === MODE_FORCED_401;
     const isExpired = mode === MODE_EXPIRED;
     const isMaxWarning = mode === MODE_MAX_WARNING;
@@ -373,7 +360,6 @@ export function useTokenExpiryChecker() {
         <Modal
             open
             closable={false}
-            maskClosable={false}
             keyboard={false}
             centered
             footer={null}

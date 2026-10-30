@@ -1,4 +1,4 @@
-export const GoogleSvg = ({ props, color = '#53565B' }) => (
+export const GoogleSvg = ({ color = 'currentColor', ...props } = {}) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         width={15}
@@ -28,7 +28,7 @@ export const GoogleSvg = ({ props, color = '#53565B' }) => (
     </svg>
 );
 
-export const CloseSvg = ({ color = '#53565B', ...props } = {}) => (
+export const CloseSvg = ({ color = 'currentColor', ...props } = {}) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         width="12"
@@ -47,7 +47,7 @@ export const CloseSvg = ({ color = '#53565B', ...props } = {}) => (
     </svg>
 );
 
-export const ToastSuccessMarkSvg = ({ color = 'white', ...props }) => (
+export const ToastSuccessMarkSvg = ({ color = 'currentColor', ...props }) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         width="13"
@@ -66,7 +66,7 @@ export const ToastSuccessMarkSvg = ({ color = 'white', ...props }) => (
     </svg>
 );
 
-export const InfoSvg = ({ color = 'white', ...props }) => (
+export const InfoSvg = ({ color = 'currentColor', ...props }) => (
     <svg
         className="fx flex-shrink-0"
         xmlns="http://www.w3.org/2000/svg"
@@ -90,7 +90,7 @@ export const InfoSvg = ({ color = 'white', ...props }) => (
     </svg>
 );
 
-export const ToastErrorMarkSvg = ({ color = 'white', ...props }) => (
+export const ToastErrorMarkSvg = ({ color = 'currentColor', ...props }) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         width="13"
@@ -109,7 +109,63 @@ export const ToastErrorMarkSvg = ({ color = 'white', ...props }) => (
     </svg>
 );
 
-export const BellSvg = ({ color = '#53565B', ...props } = {}) => (
+export const LockSvg = ({ color = 'currentColor', ...props } = {}) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="14"
+        height="14"
+        viewBox="0 0 14 14"
+        fill="none"
+        {...props}
+    >
+        <rect
+            x="2.75"
+            y="6.25"
+            width="8.5"
+            height="6"
+            rx="1.5"
+            stroke={color}
+            strokeWidth="1.5"
+        />
+        <path
+            d="M4.75 6.25V4.75a2.25 2.25 0 0 1 4.5 0v1.5"
+            stroke={color}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+export const MailSvg = ({ color = 'currentColor', ...props } = {}) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
+        fill="none"
+        {...props}
+    >
+        <rect
+            x="2.75"
+            y="4.75"
+            width="14.5"
+            height="10.5"
+            rx="1.75"
+            stroke={color}
+            strokeWidth="1.5"
+        />
+        <path
+            d="m3.5 6 6.5 4.5L16.5 6"
+            stroke={color}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+export const UserSvg = ({ color = 'currentColor', ...props } = {}) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         width="20"
@@ -119,9 +175,229 @@ export const BellSvg = ({ color = '#53565B', ...props } = {}) => (
         {...props}
     >
         <path
-            d="M10 2.5a4.5 4.5 0 0 0-4.5 4.5c0 2.4-.6 4-1.3 5-.3.5 0 1.1.6 1.1h10.4c.6 0 .9-.6.6-1.1-.7-1-1.3-2.6-1.3-5A4.5 4.5 0 0 0 10 2.5ZM8.25 16a1.75 1.75 0 0 0 3.5 0"
+            d="M10 10a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5ZM4 16.5a6 6 0 0 1 12 0"
+            stroke={color}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+export const KeySvg = ({ color = 'currentColor', ...props } = {}) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
+        fill="none"
+        {...props}
+    >
+        <circle cx="7" cy="7" r="3.25" stroke={color} strokeWidth="1.5" />
+        <path
+            d="M9.3 9.3 16 16M13.5 13.5l1.75-1.75M15.25 15.25 17 13.5"
+            stroke={color}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+export const ArrowRightSvg = ({ color = 'currentColor', ...props } = {}) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="18"
+        height="18"
+        viewBox="0 0 18 18"
+        fill="none"
+        {...props}
+    >
+        <path
+            d="M3.75 9h10.5M9.75 4.5 14.25 9l-4.5 4.5"
+            stroke={color}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+export const ShieldLockSvg = ({ color = 'currentColor', ...props } = {}) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="32"
+        height="32"
+        viewBox="0 0 32 32"
+        fill="none"
+        {...props}
+    >
+        <path
+            d="M16 3 6 7v8c0 6 4.2 10.9 10 12.5C21.8 25.9 26 21 26 15V7L16 3Z"
+            stroke={color}
+            strokeWidth="2"
+            strokeLinejoin="round"
+        />
+        <rect
+            x="12"
+            y="14.5"
+            width="8"
+            height="6"
+            rx="1.5"
+            stroke={color}
+            strokeWidth="2"
+        />
+        <path
+            d="M13.5 14.5v-1.5a2.5 2.5 0 0 1 5 0v1.5"
+            stroke={color}
+            strokeWidth="2"
+            strokeLinecap="round"
+        />
+    </svg>
+);
+
+export const RefreshSvg = ({ color = 'currentColor', ...props } = {}) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        {...props}
+    >
+        <path
+            d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2v2.5H11"
+            stroke={color}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+export const CheckCircleSvg = ({ color = 'currentColor', ...props } = {}) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="14"
+        height="14"
+        viewBox="0 0 16 16"
+        fill="none"
+        {...props}
+    >
+        <circle cx="8" cy="8" r="6.5" stroke={color} strokeWidth="1.4" />
+        <path
+            d="M5.5 8.2 7.1 9.8 10.6 6"
             stroke={color}
             strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+export const ShieldCheckSvg = ({ color = 'currentColor', ...props } = {}) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        {...props}
+    >
+        <path
+            d="M8 1.5 3 3.5v3.75c0 3 2.1 5.45 5 6.25 2.9-.8 5-3.25 5-6.25V3.5L8 1.5Z"
+            stroke={color}
+            strokeWidth="1.4"
+            strokeLinejoin="round"
+        />
+        <path
+            d="M6 7.75 7.4 9.15 10.25 6.3"
+            stroke={color}
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+export const SunSvg = ({ color = 'currentColor', ...props } = {}) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        {...props}
+    >
+        <circle cx="8" cy="8" r="3.25" stroke={color} strokeWidth="1.4" />
+        <path
+            d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M12.95 3.05l-1.06 1.06M4.11 11.89l-1.06 1.06"
+            stroke={color}
+            strokeWidth="1.4"
+            strokeLinecap="round"
+        />
+    </svg>
+);
+
+export const MoonSvg = ({ color = 'currentColor', ...props } = {}) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        {...props}
+    >
+        <path
+            d="M13.5 10.35A5.75 5.75 0 0 1 5.65 2.5a6 6 0 1 0 7.85 7.85Z"
+            stroke={color}
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
+
+export const ScreenSvg = ({ color = 'currentColor', ...props } = {}) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        {...props}
+    >
+        <rect
+            x="1.75"
+            y="2.75"
+            width="12.5"
+            height="8.5"
+            rx="1.25"
+            stroke={color}
+            strokeWidth="1.4"
+        />
+        <path
+            d="M5.75 13.75h4.5"
+            stroke={color}
+            strokeWidth="1.4"
+            strokeLinecap="round"
+        />
+    </svg>
+);
+
+export const CheckSvg = ({ color = 'currentColor', ...props } = {}) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="14"
+        height="14"
+        viewBox="0 0 14 14"
+        fill="none"
+        {...props}
+    >
+        <path
+            d="M2.5 7.25 5.5 10.25 11.5 4.25"
+            stroke={color}
+            strokeWidth="1.6"
             strokeLinecap="round"
             strokeLinejoin="round"
         />

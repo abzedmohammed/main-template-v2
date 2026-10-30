@@ -1,12 +1,11 @@
 // Readers for the standard API response envelope:
 //   { success, message, data: { result }, total, token, ... }
 //
-// These work whether you hand them the raw Axios response (fetch functions) or
-// the already-unwrapped envelope (useDynamicMutation passes `response` =
-// axiosResponse.data to onSuccess). `getEnvelope` sniffs which one it received.
+
+import { defaultTimer } from "../../utils";
 
 const ENVELOPE_MARKERS = ['success', 'data', 'token', 'message'];
-const LIST_KEYS = ['result', 'content', 'items', 'results', 'rows', 'notifications'];
+const LIST_KEYS = ['result'];
 
 export const getEnvelope = (response = {}) => {
     const data = response?.data;
@@ -18,33 +17,20 @@ export const getEnvelope = (response = {}) => {
 
 export const getEnvelopeResult = (response = {}) => {
     const envelope = getEnvelope(response);
-
-    return envelope?.data?.result ?? envelope?.data ?? null;
+    return envelope?.data?.result ?? null;
 };
 
 export const getEnvelopeMessage = (response = {}, fallback = '') => {
     const raw = getEnvelope(response)?.message;
-
-    if (typeof raw === 'string') return raw || fallback;
-
-    return raw?.message ?? fallback;
+    return raw ?? fallback;
 };
 
 export const getEnvelopeTotal = (response = {}, fallback = 0) => {
-    const envelope = getEnvelope(response);
-    const result = getEnvelopeResult(response);
+    const envelopeTotal = getEnvelope(response)?.total;
 
-    return Number(
-        envelope?.total ??
-            envelope?.data?.total ??
-            result?.total ??
-            result?.totalElements ??
-            fallback
-    );
+    return Number(envelopeTotal ?? fallback);
 };
 
-// Normalise any list payload (array, or wrapped in result/content/items/…) to
-// a flat array.
 export const extractList = (result) => {
     if (Array.isArray(result)) return result;
 
@@ -57,16 +43,32 @@ export const extractList = (result) => {
 
 export const getResponseUserId = (response = {}) => {
     const result = getEnvelopeResult(response);
-    const envelope = getEnvelope(response);
 
     return (
-        result?.userId ??
         result?.usrId ??
         result?.user?.usrId ??
-        envelope?.data?.userId ??
-        envelope?.data?.usrId ??
+        result?.reqId ??
+        result?.user?.reqId ??
         null
     );
+};
+
+export const getResponseMaskedEmail = (response = {}) => {
+    const result = getEnvelopeResult(response);
+
+    return result?.maskedEmail ?? null;
+};
+
+export const getResponseOtpTimer = (response = {}) => {
+    const result = getEnvelopeResult(response);
+
+    let minutes = result?.otpTimer ?? null;
+
+    if (minutes !== null && minutes !== undefined) {
+        return Math.floor(minutes * 60);
+    }
+    
+    return defaultTimer;
 };
 
 export const getResponseToken = (response = {}) => {
@@ -77,7 +79,7 @@ export const getResponseToken = (response = {}) => {
         result?.accessToken ??
         result?.token ??
         envelope?.token ??
-        envelope?.data?.token ??
+        envelope?.accessToken ??
         null
     );
 };
@@ -86,10 +88,5 @@ export const getResponseRefreshToken = (response = {}) => {
     const result = getEnvelopeResult(response);
     const envelope = getEnvelope(response);
 
-    return (
-        result?.refreshToken ??
-        envelope?.refreshToken ??
-        envelope?.data?.refreshToken ??
-        null
-    );
+    return result?.refreshToken ?? envelope?.refreshToken ?? null;
 };

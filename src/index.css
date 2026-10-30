@@ -1,10 +1,8 @@
 @import 'tailwindcss';
 
-:root {
-    color-scheme: light;
-
+@theme {
     /* Core colors */
-    --color-bg: #f4f3f3;
+    --color-bg: #f6f4f1;
     --color-surface: #ffffff;
     --color-surface-alt: #f9fbfd;
     --color-text: #121212;
@@ -19,14 +17,99 @@
     --color-warning: #f59e0b;
     --color-danger: #ee1d52;
     --color-info: #3b82f6;
+
+    /* Kinship & Trust palette (auth / sanctuary surfaces) */
+    --color-privacy-indigo: #4f46e5;
+    --color-privacy-navy: #0f172a;
+
+    /* Mid-stop between navy and indigo, for the ambient auth gradient. */
+    --color-primary-container: #131b2e;
+    --color-success-emerald: #10b981;
+    --color-announcement-amber: #f59e0b;
+    --color-family-purple: #8b5cf6;
+    --color-auth-canvas: #948566;
+
+    /* Copy that sits on top of a brand-coloured surface (navy/indigo/canvas).
+       Deliberately identical in both themes — the surface under it is fixed. */
+    --color-on-brand: #ffffff;
+}
+
+:root {
+    color-scheme: light;
+
+    /* Field fill: a warm cream (never stark white, never grey). */
+    --input-bg: color-mix(in srgb, var(--color-surface) 93%, var(--color-announcement-amber));
+
+    /* Primary button: deep navy → indigo. */
+    --btn-primary-bg: linear-gradient(135deg, var(--color-privacy-navy), var(--color-privacy-indigo));
+
+    /* Page backdrop: a soft, warm grey wash in light mode (solid in dark). */
+    --bg-gradient: linear-gradient(135deg, #faf8f5 0%, #f4f1ed 50%, #ebe7e2 100%);
+
+    /* Auth backdrop — light: an airy ivory wash with soft indigo / amber glows. */
+    --auth-base: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-surface) 70%, var(--color-bg)),
+        var(--color-bg) 55%,
+        color-mix(in srgb, var(--color-privacy-indigo) 9%, var(--color-bg))
+    );
+    --auth-base-opacity: 1;
+    --auth-depth: linear-gradient(
+        to top right,
+        transparent,
+        color-mix(in srgb, var(--color-family-purple) 8%, transparent),
+        transparent
+    );
+    --auth-glow-amber: color-mix(in srgb, var(--color-announcement-amber) 20%, transparent);
+    --auth-glow-amber-core: color-mix(in srgb, var(--color-announcement-amber) 24%, transparent);
+    --auth-glow-indigo: color-mix(in srgb, var(--color-privacy-indigo) 14%, transparent);
+    --auth-blend-base: normal;
+    --auth-blend-depth: normal;
+    --auth-blend-glow: normal;
+    --auth-blend-core: normal;
+    
+    /* Card is frosted glass so the warm backdrop shows through instead of stark white. */
+    --auth-card-alpha: 58%;
 }
 
 :root[data-theme='light'] {
     color-scheme: light;
 }
 
+/* Dark palette — same token names, so everything downstream follows. */
 :root[data-theme='dark'] {
     color-scheme: dark;
+
+    --bg-gradient: linear-gradient(var(--color-bg), var(--color-bg));
+
+    /* Auth backdrop — dark: deep navy → indigo with blended amber glows. */
+    --auth-base: linear-gradient(
+        to bottom right,
+        var(--color-privacy-navy),
+        var(--color-primary-container),
+        color-mix(in srgb, var(--color-privacy-indigo) 40%, transparent)
+    );
+    --auth-base-opacity: 0.9;
+    --auth-depth: linear-gradient(
+        to top right,
+        transparent,
+        color-mix(in srgb, var(--color-privacy-indigo) 10%, transparent),
+        transparent
+    );
+    --auth-glow-amber: color-mix(in srgb, var(--color-announcement-amber) 15%, transparent);
+    --auth-glow-amber-core: color-mix(in srgb, var(--color-announcement-amber) 25%, transparent);
+    --auth-glow-indigo: color-mix(in srgb, var(--color-privacy-indigo) 20%, transparent);
+    --auth-blend-base: multiply;
+    --auth-blend-depth: overlay;
+    --auth-blend-glow: screen;
+    --auth-blend-core: color-dodge;
+    --auth-card-alpha: 95%;
+    --input-bg: color-mix(in srgb, var(--color-bg) 75%, var(--color-border));
+    --btn-primary-bg: linear-gradient(
+        135deg,
+        var(--color-privacy-indigo),
+        color-mix(in srgb, var(--color-privacy-indigo) 55%, var(--color-privacy-navy))
+    );
 
     --color-bg: #0f1115;
     --color-surface: #171a21;
@@ -42,11 +125,48 @@
     --color-warning: #fbbf24;
     --color-danger: #fb7185;
     --color-info: #60a5fa;
+
+    --color-privacy-indigo: #7c74ff;
+    --color-success-emerald: #34d399;
+    --color-announcement-amber: #fbbf24;
+    --color-family-purple: #a78bfa;
+    --color-auth-canvas: #5f5646;
 }
 
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme='light']) {
         color-scheme: dark;
+
+        --bg-gradient: linear-gradient(var(--color-bg), var(--color-bg));
+
+        /* Auth backdrop — dark: deep navy → indigo with blended amber glows. */
+        --auth-base: linear-gradient(
+            to bottom right,
+            var(--color-privacy-navy),
+            var(--color-primary-container),
+            color-mix(in srgb, var(--color-privacy-indigo) 40%, transparent)
+        );
+        --auth-base-opacity: 0.9;
+        --auth-depth: linear-gradient(
+            to top right,
+            transparent,
+            color-mix(in srgb, var(--color-privacy-indigo) 10%, transparent),
+            transparent
+        );
+        --auth-glow-amber: color-mix(in srgb, var(--color-announcement-amber) 15%, transparent);
+        --auth-glow-amber-core: color-mix(in srgb, var(--color-announcement-amber) 25%, transparent);
+        --auth-glow-indigo: color-mix(in srgb, var(--color-privacy-indigo) 20%, transparent);
+        --auth-blend-base: multiply;
+        --auth-blend-depth: overlay;
+        --auth-blend-glow: screen;
+        --auth-blend-core: color-dodge;
+        --auth-card-alpha: 95%;
+        --input-bg: color-mix(in srgb, var(--color-bg) 75%, var(--color-border));
+        --btn-primary-bg: linear-gradient(
+            135deg,
+            var(--color-privacy-indigo),
+            color-mix(in srgb, var(--color-privacy-indigo) 55%, var(--color-privacy-navy))
+        );
 
         --color-bg: #0f1115;
         --color-surface: #171a21;
@@ -62,6 +182,12 @@
         --color-warning: #fbbf24;
         --color-danger: #fb7185;
         --color-info: #60a5fa;
+
+        --color-privacy-indigo: #7c74ff;
+        --color-success-emerald: #34d399;
+        --color-announcement-amber: #fbbf24;
+        --color-family-purple: #a78bfa;
+        --color-auth-canvas: #5f5646;
     }
 }
 
@@ -69,12 +195,22 @@
     font-family: 'Inter', sans-serif !important;
 }
 
+html {
+    background-color: var(--color-bg) !important;
+    background-image: var(--bg-gradient) !important;
+    background-attachment: fixed;
+}
+
 html,
 body,
 #root {
     min-height: 100%;
-    background: var(--color-bg) !important;
     color: var(--color-text);
+}
+
+body,
+#root {
+    background: transparent !important;
 }
 
 body::-webkit-scrollbar {

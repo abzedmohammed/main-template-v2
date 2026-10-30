@@ -1,15 +1,18 @@
 import toast from 'react-hot-toast';
 import ToastCard from './ToastCard';
 
-const toneConfig = {
+const TONES = {
     success: {
         defaultMessage: 'Operation completed successfully.',
+        duration: 4000,
     },
     info: {
         defaultMessage: 'You have a new notification.',
+        duration: 5000,
     },
     error: {
         defaultMessage: 'An error occurred. Please try again later.',
+        duration: 7000,
     },
 };
 
@@ -21,10 +24,9 @@ const getMessage = (message, fallback) => {
     return fallback;
 };
 
-const showToast = (tone, toastObj) => {
-    const config = toneConfig[tone];
-    const message = getMessage(toastObj?.message, config.defaultMessage);
-    const duration = tone === 'error' ? 5000 : 4000;
+const showToast = (tone, rawMessage) => {
+    const { defaultMessage, duration } = TONES[tone];
+    const message = getMessage(rawMessage, defaultMessage);
 
     toast.custom(
         (t) => (
@@ -36,20 +38,14 @@ const showToast = (tone, toastObj) => {
             />
         ),
         {
-            id: toastObj?.id,
+            id: `${tone}:${message}`,
             duration,
         }
     );
 };
 
-export const successNotification = (toastObj) => {
-    showToast('success', toastObj);
-};
+export const successNotification = (message) => showToast('success', message);
 
-export const infoNotification = (toastObj) => {
-    showToast('info', toastObj);
-};
+export const infoNotification = (message) => showToast('info', message);
 
-export const errorNotification = (toastObj) => {
-    showToast('error', toastObj);
-};
+export const errorNotification = (message) => showToast('error', message);

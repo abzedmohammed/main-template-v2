@@ -1,15 +1,15 @@
-import { AuthLogoComponent, AuthSideComponent, LoginFormComponent } from './components';
+import { LoginFormComponent } from './components';
 import { loginAction } from '../../actions/auth';
-import { useAuthFormMutation } from './hooks';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { logoutStateFn } from '../../features/auth/authSlice';
 import { tokenService } from '../../services/tokenService';
+import { useFormMutation } from '../../hooks';
 
 export default function Login() {
     const dispatch = useDispatch();
 
-    const { form, onFinish, isProcessing } = useAuthFormMutation(loginAction);
+    const { form, onFinish, isProcessing } = useFormMutation(loginAction);
 
     useEffect(() => {
         tokenService.clear();
@@ -17,20 +17,12 @@ export default function Login() {
     }, [dispatch]);
 
     return (
-        <div className="auth_main">
-            <div className="auth_side_component">
-                <AuthSideComponent />
-            </div>
-
-            <div className="auth_main_component">
-                <AuthLogoComponent>
-                    <LoginFormComponent
-                        form={form}
-                        onFinish={onFinish}
-                        isProcessing={isProcessing}
-                    />
-                </AuthLogoComponent>
-            </div>
-        </div>
+        <main className="auth_card">
+            <LoginFormComponent
+                form={form}
+                onFinish={onFinish}
+                isProcessing={isProcessing}
+            />
+        </main>
     );
 }

@@ -1,20 +1,24 @@
 import { jwtDecode } from 'jwt-decode';
-import { authStateFn, userIdStateFn } from '../../features/auth/authSlice';
+import {
+    authOtpStateFn,
+    authStateFn,
+    maskedEmailStateFn,
+    userIdStateFn,
+} from '../../features/auth/authSlice';
 import { ROUTES } from '../../routes';
 import { authService } from '../../services/authService';
 import { tokenService } from '../../services/tokenService';
-import { onError, onSuccess } from '../../utils';
+import { errorToast, successToast } from '../../utils';
 import {
     getEnvelopeMessage,
     getEnvelopeResult,
+    getResponseMaskedEmail,
+    getResponseOtpTimer,
     getResponseToken,
     getResponseUserId,
     post,
+    postWithoutBody,
 } from '../shared';
-
-// ---------------------------------------------------------------------------
-// Feature-local helpers
-// ---------------------------------------------------------------------------
 
 const decodeTokenClaims = (token) => {
     if (!token) return {};
@@ -27,31 +31,16 @@ const decodeTokenClaims = (token) => {
 };
 
 const buildSessionUser = (response, token) => {
-    const result = getEnvelopeResult(response) ?? {};
-    const user = result?.user ?? result?.usr ?? result;
+    const user = getEnvelopeResult(response)?.user ?? {};
     const claims = decodeTokenClaims(token);
-    const role =
-        claims?.usrRoleCode ?? claims?.role ?? user?.usrRoleCode ?? user?.role ?? 'ADMIN';
 
     return {
-        ...user,
         ...claims,
-        usrId: user?.usrId ?? claims?.usrId ?? null,
-        usrEmail: user?.usrEmail ?? claims?.usrEmail ?? '',
-        usrFullName:
-            user?.usrFullName ??
-            claims?.usrFullName ??
-            [
-                user?.usrFirstName ?? claims?.usrFirstName,
-                user?.usrLastName ?? claims?.usrLastName,
-            ]
-                .filter(Boolean)
-                .join(' '),
-        role,
+        ...user,
+        usrRoleCode: user.usrRoleCode ?? claims.role ?? null,
     };
 };
 
-// Persist the token, hydrate auth state, toast, and route to the dashboard.
 const completeAuthSession = ({
     response,
     dispatch,
@@ -61,47 +50,43 @@ const completeAuthSession = ({
     const token = getResponseToken(response);
 
     if (!token) {
-        onError('Could not verify account');
+        errorToast('Could not verify account');
         return false;
     }
 
     tokenService.set(token);
     dispatch(authStateFn(buildSessionUser(response, token)));
-    onSuccess(getEnvelopeMessage(response, successMessage));
+    successToast(getEnvelopeMessage(response, successMessage));
     authService.redirectToDashboard({ navigate });
 
     return true;
 };
 
-// onSuccess handler shared by every "start a flow, then verify via OTP" action:
-// require a usrId, stash it, toast, and navigate to the verification screen.
 const startVerificationFlow =
     ({ failureMessage, successMessage, redirectTo }) =>
     ({ response, dispatch, navigate }) => {
-        const usrId = getResponseUserId(response);
+        const reqId = getResponseUserId(response);
 
-        if (!usrId) {
-            onError(failureMessage);
+        if (!reqId) {
+            errorToast(failureMessage);
             return;
         }
 
-        dispatch(userIdStateFn(usrId));
-        onSuccess(getEnvelopeMessage(response, successMessage));
+        dispatch(userIdStateFn(reqId));
+        dispatch(maskedEmailStateFn(getResponseMaskedEmail(response)));
+        dispatch(authOtpStateFn(getResponseOtpTimer(response)));
+        successToast(getEnvelopeMessage(response, successMessage));
         navigate(redirectTo);
     };
-
-// ---------------------------------------------------------------------------
-// Actions
-// ---------------------------------------------------------------------------
 
 export const loginAction = {
     method: 'POST',
     endpoint: '/auth/sign_in',
     mutationFn: post('/auth/sign_in'),
-    onError,
-    onSuccess: startVerificationFlow({
+    errorToast,
+    successToast: startVerificationFlow({
         failureMessage: 'Could not start login verification',
-        successMessage: 'Please verify your account',
+        successMessage: 'Verification code sent',
         redirectTo: ROUTES.AUTH.LOGIN_OTP_VERIFICATION,
     }),
 };
@@ -110,10 +95,10 @@ export const registerAction = {
     method: 'POST',
     endpoint: '/auth/sign_up',
     mutationFn: post('/auth/sign_up'),
-    onError,
-    onSuccess: startVerificationFlow({
+    errorToast,
+    successToast: startVerificationFlow({
         failureMessage: 'Could not start registration verification',
-        successMessage: 'Registration successful. Please verify your phone number',
+        successMessage: 'Verification code sent',
         redirectTo: ROUTES.AUTH.REGISTRATION_VERIFICATION,
     }),
 };
@@ -122,8 +107,8 @@ export const accountVerification = {
     method: 'POST',
     endpoint: '/auth/sign_in_otp',
     mutationFn: post('/auth/sign_in_otp'),
-    onError,
-    onSuccess: ({ response, dispatch, navigate }) =>
+    errorToast,
+    successToast: ({ response, dispatch, navigate }) =>
         completeAuthSession({
             response,
             dispatch,
@@ -136,19 +121,19 @@ export const accountResendOtp = {
     method: 'POST',
     endpoint: '/auth/resend_otp',
     mutationFn: post('/auth/resend_otp'),
-    onError,
-    onSuccess: ({ response }) =>
-        onSuccess(getEnvelopeMessage(response, 'OTP sent successfully')),
+    errorToast,
+    successToast: ({ response }) =>
+        successToast(getEnvelopeMessage(response, 'Verification code resent')),
 };
 
 export const forgotPasswordAction = {
     method: 'POST',
     endpoint: '/auth/reset_password',
     mutationFn: post('/auth/reset_password'),
-    onError,
-    onSuccess: startVerificationFlow({
+    errorToast,
+    successToast: startVerificationFlow({
         failureMessage: 'Could not start password reset verification',
-        successMessage: 'OTP sent successfully',
+        successMessage: 'Verification code sent',
         redirectTo: ROUTES.AUTH.FORGOT_PASSWORD_VERIFICATION,
     }),
 };
@@ -157,9 +142,9 @@ export const forgotPasswordVerificationAction = {
     method: 'POST',
     endpoint: '/auth/sign_in_otp',
     mutationFn: post('/auth/sign_in_otp'),
-    onError,
-    onSuccess: ({ response, navigate }) => {
-        onSuccess(getEnvelopeMessage(response, 'Verification successful'));
+    errorToast,
+    successToast: ({ response, navigate }) => {
+        successToast(getEnvelopeMessage(response, 'OTP verified'));
         navigate(ROUTES.AUTH.UPDATE_PASSWORD);
     },
 };
@@ -168,8 +153,21 @@ export const updatePasswordAction = {
     method: 'POST',
     endpoint: '/auth/update_password',
     mutationFn: post('/auth/update_password'),
-    onError,
+    errorToast,
     redirectTo: ROUTES.AUTH.LOGIN,
-    onSuccess: ({ response }) =>
-        onSuccess(getEnvelopeMessage(response, 'Password updated successfully')),
+    successToast: ({ response }) => {
+        successToast(getEnvelopeMessage(response, 'Password updated successfully'));
+    },
+};
+
+export const refreshSessionAction = {
+    method: 'POST',
+    endpoint: '/auth/refresh-session',
+    mutationFn: postWithoutBody('/auth/refresh-session'),
+    errorToast,
+    successToast: ({ response }) => {
+        const token = getResponseToken(response);
+
+        if (token) tokenService.set(token);
+    },
 };

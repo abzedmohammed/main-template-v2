@@ -71,174 +71,116 @@ Notes:
 
 ## Auth Endpoints In Template
 
-### `POST /auth/sign_in`
+Mirrors the backend contract in `main-java-template/docs/project-apis.md`. OTP-based, multi-step, stateless JWT: sign-up / sign-in / reset start a flow, a 4-digit OTP verifies it, and the access token is sent as `Authorization: Bearer <token>` (no cookies, no refresh tokens).
 
-Purpose:
+Auth credential fields are intentionally **un-prefixed** (`email`, `secret`, `password`, `fullName`, `phone`, `agreement`, `otp`); the flow id is `reqId` in every step.
 
-- submit login credentials and start OTP verification
-
-Expected request:
-
-```json
-{
-    "usrEmail": "user@example.com",
-    "usrSecret": "password"
-}
+```
+register ─▶ /auth/sign_up        ─▶ OTP ─▶ /auth/sign_in_otp ─▶ session
+login    ─▶ /auth/sign_in        ─▶ OTP ─▶ /auth/sign_in_otp ─▶ session
+forgot   ─▶ /auth/reset_password ─▶ OTP ─▶ /auth/sign_in_otp ─▶ /auth/update_password
 ```
 
-Expected result payload:
+### Init response (`sign_up`, `sign_in`, `reset_password`)
 
 ```json
-{
-    "usrId": "USR123"
-}
+{ "reqId": "0190a1b2-...", "maskedEmail": "ja****@example.com", "otpTimer": 5 }
 ```
 
 Frontend behavior:
 
-- stores `usrId` in auth slice
-- routes to `ROUTES.AUTH.LOGIN_OTP_VERIFICATION`
+- `readOtpFlow` stores `{ reqId, maskedEmail, otpTimer }` in `state.auth.otpFlow` (`otpFlowStateFn`)
+- OTP screens guard on `otpFlow.reqId` (redirect to login without it) and show "Enter the code sent to `maskedEmail`"
+- resend countdown = `otpTimer × 60` seconds, falling back to `VITE_DEFAULT_TIMER`
+
+### `POST /auth/sign_in`
+
+```json
+{ "email": "jane@example.com", "secret": "Password@123" }
+```
+
+Returns the init response → routes to `ROUTES.AUTH.LOGIN_OTP_VERIFICATION`. Errors: 401 bad credentials / "Please verify account before continuing", 403 deactivated, 429 locked.
 
 ### `POST /auth/sign_up`
 
-Purpose:
-
-- create an account and start registration OTP verification
-
-Expected request:
-
 ```json
 {
-    "usrFirstName": "Jane",
-    "usrLastName": "Doe",
-    "usrEmail": "jane@example.com",
-    "usrMobileNumber": "+254700000000",
-    "usrSecret": "Password@123"
+    "fullName": "Jane Doe",
+    "phone": "+254712345678",
+    "email": "jane@example.com",
+    "password": "Password@123",
+    "agreement": true
 }
 ```
 
-Expected result payload:
+- `phone` is E.164 (from `FormInputPhone`)
+- `agreement` must be `true` (backend `@AssertTrue`); the form enforces it with a checkbox validator
 
-```json
-{
-    "usrId": "USR123"
-}
-```
-
-Frontend behavior:
-
-- stores `usrId`
-- routes to `ROUTES.AUTH.REGISTRATION_VERIFICATION`
+Returns the init response → routes to `ROUTES.AUTH.REGISTRATION_VERIFICATION`. 409 when the email / mobile number belongs to a non-`DRAFT` account. New accounts get role `USER`.
 
 ### `POST /auth/sign_in_otp`
 
-Purpose:
-
-- verify OTP for login or registration
-
-Expected request:
-
 ```json
-{
-    "usrId": "USR123",
-    "usrOTP": "123456"
-}
+{ "reqId": "0190a1b2-...", "otp": "1234" }
 ```
 
-Expected result payload:
+Login / registration result:
 
 ```json
 {
-    "accessToken": "jwt-or-token-value",
+    "accessToken": "eyJ...",
     "user": {
-        "usrId": "USR123",
-        "usrEmail": "user@example.com",
+        "usrId": "0190a1b2-...",
+        "usrEmail": "jane@example.com",
         "usrFullName": "Jane Doe",
-        "usrRoleCode": "ADMIN"
+        "usrMobileNumber": "0712345678",
+        "usrRoleCode": "USER"
     }
 }
 ```
 
 Frontend behavior:
 
-- saves token
-- hydrates auth state
-- routes to dashboard
+- saves `accessToken` via `tokenService.set`
+- hydrates `state.auth.user` (JWT claims `sub`, `email`, `name`, `role`, `exp` merged under the `user` fields)
+- `state.auth.userRole` = `user.usrRoleCode`, falling back to the JWT `role` claim; clears `otpFlow`
+- routes to the dashboard
+
+Reset flow: `data.result` is `null` → routes to `ROUTES.AUTH.UPDATE_PASSWORD`, keeping `otpFlow.reqId`. Errors: 400 invalid/expired, 429 too many wrong attempts.
 
 ### `POST /auth/resend_otp`
 
-Purpose:
-
-- resend OTP for active auth flow
-
-Expected request:
-
 ```json
-{
-    "usrId": "USR123"
-}
+{ "reqId": "0190a1b2-..." }
 ```
+
+`data.result` is `null`; the countdown restarts.
 
 ### `POST /auth/reset_password`
 
-Purpose:
-
-- start forgot-password flow
-
-Expected request:
-
 ```json
-{
-    "usrEmail": "user@example.com"
-}
+{ "email": "jane@example.com" }
 ```
 
-Expected result payload:
-
-```json
-{
-    "usrId": "USR123"
-}
-```
-
-Frontend behavior:
-
-- stores `usrId`
-- routes to forgot-password verification
+Returns the init response (unknown emails still succeed — no enumeration) → routes to `ROUTES.AUTH.FORGOT_PASSWORD_VERIFICATION`.
 
 ### `POST /auth/update_password`
 
-Purpose:
-
-- save a new password after verification
-
-Expected request:
-
 ```json
-{
-    "usrId": "USR123",
-    "usrEncryptedPassword": "Password@123"
-}
+{ "reqId": "0190a1b2-...", "password": "NewPassword@123" }
 ```
 
-Frontend behavior:
-
-- shows success toast
-- redirects to login
+Authorized by a reset OTP verified in the last 15 minutes (401 otherwise). The frontend validates strength + confirmation first; on success it clears `otpFlow` and redirects to login.
 
 ### `POST /auth/refresh-session`
 
-Purpose:
-
-- refresh the current session when token is near expiry
-
-Expected result payload:
+Authenticated (Bearer), no body. Result:
 
 ```json
-{
-    "token": "new-jwt-or-access-token"
-}
+{ "token": "eyJ..." }
 ```
+
+`refreshSessionAction` stores the new token (which also restarts the client session window).
 
 ## Admin/Profile Endpoints In Template
 
@@ -299,6 +241,34 @@ Expected request:
     "notStatus": "UNREAD"
 }
 ```
+
+## Delete Endpoint In Template
+
+### `DELETE /api/delete/{id}`
+
+Purpose:
+
+- delete a record by id — the only non-`POST` endpoint in the contract
+
+Request:
+
+- no body; the id travels in the path (URL-encoded)
+- frontend builds it with `createMutationAction({ path: '/api/delete/{id}', method: 'DELETE', mapPayload })`, which fills `{id}` from the mutation payload (after `mapPayload`) and throws before sending if it is missing
+
+Expected response:
+
+```json
+{
+    "success": true,
+    "message": "Record deleted successfully",
+    "data": null,
+    "total": 0,
+    "targetUrl": null,
+    "status": 200
+}
+```
+
+- `success: false` is treated as a failure and routed to `onError` with the envelope `message`
 
 ## Backend Expectations
 

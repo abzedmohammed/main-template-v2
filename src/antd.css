@@ -1,128 +1,113 @@
-/* ANTD INPUT */
+/* ANTD INPUTS — colours come from the design tokens in index.css (theme-aware) */
 
 .ant-otp {
-    column-gap: 1.75rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    column-gap: 1.25rem;
 }
 
 .ant-otp-input {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 3.5rem;
-    padding: 0.6875rem 1rem;
+    width: 3.25rem;
+    height: 3.25rem;
+    padding: 0.75rem;
     aspect-ratio: 1 / 1;
-    border-radius: 0.25rem;
-    border: 1px solid #d1c3c3;
-    background: #fff;
+    border-radius: 0.75rem;
+    border: 1.5px solid color-mix(in srgb, var(--color-text) 30%, var(--color-border));
+    background: var(--input-bg);
     box-shadow: none;
     outline: none;
-    font-size: 1.7rem;
-    color: var(--CD-N-10, #0e0e0e);
-    font-weight: 400;
-    line-height: 1.5rem;
+    font-size: 1.25rem;
+    color: var(--color-text);
+    font-weight: 500;
+    line-height: 1;
 }
 
-.auth_input {
-    width: 100% !important;
-    display: flex !important;
-    height: 2.5rem !important;
-    padding: 0.41819rem 1.25rem !important;
-    justify-content: center !important;
-    align-items: center !important;
-    gap: 0.29869rem !important;
-    align-self: stretch !important;
-    border-radius: 0.3125rem !important;
-    border: 1px solid #ded0be !important;
-    background: #fff !important;
+.ant-otp-input:hover,
+.ant-otp-input:focus {
+    border-color: var(--color-privacy-indigo);
+}
+
+.ant-otp-input:focus {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-privacy-indigo) 25%, transparent);
 }
 
 .primary_input {
-    display: flex;
     width: 100% !important;
-    height: 2.5rem !important;
-    padding: 0.41819rem 1.25rem 0.41819rem 0.75rem !important;
-    align-items: center !important;
-    gap: 0.625rem !important;
-    align-self: stretch !important;
-    border-radius: 0.3125rem !important;
-    border: 1px solid var(--Stroke, #e5e5e5) !important;
-    background: #fff !important;
-}
-
-.primary_input:focus-within {
-    box-shadow: 0 0 0 1px #e5e5e5 !important;
-}
-
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
-    box-shadow: 0 0 0 1000px transparent inset !important;
-    -webkit-text-fill-color: inherit !important;
-    background-clip: content-box !important;
-    transition: background-color 9999s ease-in-out 0s;
-}
-
-input:-moz-autofill {
-    box-shadow: 0 0 0 1000px transparent inset !important;
-    -moz-text-fill-color: inherit !important;
-}
-
-/* ANTD SELECT */
-
-.auth_input .ant-select-selector {
-    width: 100% !important;
+    min-height: 3.125rem !important;
     display: flex !important;
     align-items: center !important;
-    align-self: stretch !important;
-    border: none !important;
-    background: #fff !important;
+    padding: 0 1rem !important;
+    gap: 0.5rem !important;
+    overflow: hidden !important;
+    border-radius: 0.75rem !important;
+    border: 1px solid var(--color-border) !important;
+    background: var(--input-bg) !important;
     box-shadow: none !important;
+    color: var(--color-text) !important;
+    font-size: 1rem !important;
+    font-weight: 400 !important;
+    line-height: 1.5rem !important;
+    transition:
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        background-color 160ms ease;
 }
 
-.auth_input:hover .ant-select-selector {
-    border-color: transparent !important;
-    outline: none !important;
-    box-shadow: none !important;
+.primary_input input,
+.primary_input textarea {
+    color: var(--color-text) !important;
+    background: transparent !important;
 }
 
-.ant-select {
-    box-shadow: none !important;
-    background: #fff !important;
-    padding: 0 !important;
+.primary_input input::placeholder,
+.primary_input textarea::placeholder,
+.primary_input .ant-select-selection-placeholder {
+    color: var(--color-text-muted) !important;
+    opacity: 0.7;
 }
 
-.primary_input .ant-select-selector {
-    border: none !important;
-    box-shadow: none !important;
-    background: #fff !important;
+.primary_input:hover {
+    border-color: var(--color-privacy-indigo) !important;
 }
 
-/* ANTD FORM ITEM */
+.primary_input:focus,
+.primary_input:focus-within,
+.primary_input.ant-input-affix-wrapper-focused {
+    border-color: var(--color-privacy-indigo) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-privacy-indigo) 25%, transparent) !important;
+}
 
-.ant-form-item {
+.primary_input.ant-input-status-error,
+.ant-form-item-has-error .primary_input {
+    border-color: var(--color-danger) !important;
+}
+
+.ant-form-item-has-error .primary_input:focus-within {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-danger) 25%, transparent) !important;
+}
+
+.primary_input:disabled,
+.primary_input.ant-input-disabled,
+.primary_input.ant-input-affix-wrapper-disabled {
+    background: var(--color-surface-alt) !important;
+    color: var(--color-text-muted) !important;
+    cursor: not-allowed;
+}
+
+.ant-form-item-required{
+    width: 100% !important;
+}
+
+.ant-form-item-label label{
+    width: 100% !important;
+}
+
+.ant-form-item{
     margin-bottom: 0 !important;
-}
-
-.ant-form-item-control-input-content {
-    background-color: #fff !important;
-}
-
-.ant-form-item-label {
-    padding: 0 0 0.62rem !important;
-}
-
-.ant-form-item-label label {
-    width: 100%;
-    color: #3d3d3d !important;
-    font-size: 0.9375rem !important;
-    font-weight: 500 !important;
-    line-height: 1.25rem !important;
-    text-wrap: auto !important;
-    text-align: left !important;
-    height: 100% !important;
 }
 
 .ant-form-item-required::before {
@@ -130,119 +115,56 @@ input:-moz-autofill {
 }
 
 .ant-form-item-required::after {
-    content: '*' !important;
-    visibility: visible !important;
+    content: '' !important;
 }
 
-.ant-form-item-has-error .ant-form-item-control-input-content {
-    height: 100% !important;
-    border-radius: 0.3125rem !important;
-    border: 1px solid #ff4d4f !important;
-    background: #fff !important;
+
+/* ANTD CHECKBOX */
+
+.primary_checkbox .ant-checkbox-wrapper {
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-text);
 }
 
-.ant-form-item-has-error .ant-input,
-.ant-form-item-has-error .ant-input-affix-wrapper,
-.ant-form-item-has-error .ant-select,
-.ant-form-item-has-error .ant-select-selector,
-.ant-form-item-has-error .ant-input-number {
-    border: none !important;
-    box-shadow: none !important;
+/* AntD adds its own inline padding; the checkbox sits flush with the first text line. */
+.primary_checkbox .ant-checkbox {
+    top: 0.125rem;
 }
 
-.ant-form-item-has-error .ant-form-item-additional {
-    display: none !important;
+.primary_checkbox .ant-checkbox + span {
+    padding-inline: 0;
+    color: var(--color-text-muted);
 }
 
-/* ANT CHECKBOX */
-
-.auth_checkbox .ant-checkbox-inner {
-    width: 0.875rem !important;
-    height: 0.875rem !important;
-    aspect-ratio: 1 / 1 !important;
-    border-radius: 0.25rem !important;
-    border: 1px solid #ded0be !important;
+.primary_checkbox .ant-checkbox-inner {
+    border-radius: 0.375rem;
+    border: 1px solid var(--color-border);
+    background: var(--input-bg);
+    transition:
+        border-color 160ms ease,
+        background-color 160ms ease,
+        box-shadow 160ms ease;
 }
 
-.auth_checkbox .ant-checkbox-checked .ant-checkbox-inner {
-    background-color: #948566;
+.primary_checkbox .ant-checkbox-wrapper:hover .ant-checkbox-inner,
+.primary_checkbox .ant-checkbox:hover .ant-checkbox-inner {
+    border-color: var(--color-privacy-indigo);
 }
 
-.auth_checkbox.ant-checkbox-wrapper:hover .ant-checkbox-checked .ant-checkbox-inner {
-    background-color: #948566 !important;
-    border-color: #948566 !important;
+.primary_checkbox .ant-checkbox-checked .ant-checkbox-inner {
+    background: var(--color-privacy-indigo);
+    border-color: var(--color-privacy-indigo);
 }
 
-.auth_checkbox .ant-checkbox-checked .ant-checkbox-inner::after {
-    height: 9.142857px !important;
-    top: 45% !important;
+.primary_checkbox .ant-checkbox-checked .ant-checkbox-inner::after {
+    border-color: var(--color-on-brand);
 }
 
-/* ANTD MENU */
-
-.ant-menu {
-    height: auto !important;
-    background: transparent !important;
-    flex-direction: column !important;
-    border-inline-end: none !important;
+.primary_checkbox .ant-checkbox-input:focus-visible + .ant-checkbox-inner {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-privacy-indigo) 25%, transparent);
 }
 
-.ant-menu-title-content {
-    color: #fff !important;
-    font-size: 0.8125rem !important;
-    font-weight: 500 !important;
-    line-height: 150% !important;
-}
-
-.ant-menu-item-active span {
-    color: #fff !important;
-    font-size: 0.8125rem !important;
-    font-weight: 500 !important;
-    line-height: 150% !important;
-}
-
-.ant-menu-item-selected {
-    width: 100% !important;
-    display: flex !important;
-    border-radius: 0.25rem !important;
-    background: rgba(248, 239, 226, 0.3) !important;
-}
-
-/* ANTD DRAWER */
-
-.primary_drawer .ant-drawer-header {
-    display: none !important;
-}
-
-.primary_drawer .ant-drawer-body {
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    padding: 0 !important;
-}
-
-/* ANT BUTTON */
-
-.ant-btn-icon {
-    display: flex !important;
-}
-
-.ant-btn:hover {
-    background: unset !important;
-    color: unset !important;
-    border-color: unset !important;
-}
-
-.ant-btn-loading-icon svg {
-    fill: #545454 !important;
-}
-
-.ant-btn-loading span {
-    color: #545454 !important;
-}
-
-/* ANTD DROPDOWN */
-
-.ant-dropdown-trigger {
-    display: flex !important;
+.primary_checkbox.ant-form-item-has-error .ant-checkbox-inner {
+    border-color: var(--color-danger);
 }

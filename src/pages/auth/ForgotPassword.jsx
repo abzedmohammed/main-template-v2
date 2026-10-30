@@ -1,21 +1,17 @@
-import { AuthLogoComponent, ForgotPasswordFormComponent } from './components';
+import { ForgotPasswordFormComponent } from './components';
 import { forgotPasswordAction } from '../../actions/auth';
-import { useAuthFormMutation } from './hooks';
+import { useFormMutation } from '../../hooks';
 
 export default function ForgotPassword() {
-    const { form, onFinish, isProcessing } = useAuthFormMutation(forgotPasswordAction);
+    const { form, onFinish, isProcessing } = useFormMutation(forgotPasswordAction);
 
     return (
-        <div className="auth_main_alt">
-            <div className="auth_main_alt_component">
-                <AuthLogoComponent>
-                    <ForgotPasswordFormComponent
-                        form={form}
-                        onFinish={onFinish}
-                        isProcessing={isProcessing}
-                    />
-                </AuthLogoComponent>
-            </div>
-        </div>
+        <main className="auth_card">
+            <ForgotPasswordFormComponent
+                form={form}
+                onFinish={onFinish}
+                isProcessing={isProcessing}
+            />
+        </main>
     );
 }

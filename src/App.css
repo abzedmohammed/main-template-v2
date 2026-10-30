@@ -62,35 +62,17 @@ button:disabled {
     cursor: not-allowed;
 }
 
-.google_btn {
-    display: flex;
-    height: 2.5rem;
-    padding: 0.35844rem 0.47788rem;
-    justify-content: center;
-    align-items: center;
-    gap: 0.29869rem;
-    align-self: stretch;
-    border-radius: 0.3125rem;
-    border: 0.478px solid #ededed;
-    background: #fff;
-    box-shadow: 0 1px 4px 0 rgba(170, 170, 170, 0.25);
-    color: #121212;
-    font-size: 0.8125rem;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 0.875rem;
-}
-
 .plain_btn {
     display: flex;
     align-items: center;
     background: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 0;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 3px;
     margin: 0;
     height: fit-content;
     cursor: pointer;
+    outline: none !important;
 }
 
 .primary_btn {

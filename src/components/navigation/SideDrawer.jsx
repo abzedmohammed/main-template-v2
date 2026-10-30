@@ -24,12 +24,12 @@ export default function SideDrawer({
             onClose={handleSidebarDrawer}
             open={open}
         >
-            <div className="side_bar_open !w-full h-full">
+            <div className="w-full h-full">
                 <div className="w-full h-full">
-                    <Sider className="!w-full !max-w-full !h-full">
+                    <Sider className="w-full max-w-full h-full">
                         <div className="w-full fx justify-end p-[.9rem] border-b border-[#E5E7EB]">
                             <button onClick={handleSidebarDrawer} type="button">
-                                <LeftCircleOutlined className="text-[1.7rem] !text-white" />
+                                <LeftCircleOutlined className="text-[1.7rem] text-white" />
                             </button>
                         </div>
                         <div className="demo-logo-vertical" />

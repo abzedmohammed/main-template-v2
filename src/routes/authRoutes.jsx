@@ -6,9 +6,7 @@ import {
     Login,
     LoginOTPVerification,
     Register,
-    RegisterOptions,
     RegistrationVerification,
-    RegistrationVerificationEmail,
     UpdatePassword,
 } from '../pages/auth';
 import { ROUTES } from './paths';
@@ -23,7 +21,6 @@ export const authRoutes = [
                 path: ROUTES.AUTH.LOGIN_OTP_VERIFICATION,
                 element: <LoginOTPVerification />,
             },
-            { path: ROUTES.AUTH.REGISTER_OPTIONS, element: <RegisterOptions /> },
             { path: ROUTES.AUTH.REGISTER, element: <Register /> },
             { path: ROUTES.AUTH.FORGOT_PASSWORD, element: <ForgotPassword /> },
             {
@@ -33,10 +30,6 @@ export const authRoutes = [
             {
                 path: ROUTES.AUTH.REGISTRATION_VERIFICATION,
                 element: <RegistrationVerification />,
-            },
-            {
-                path: ROUTES.AUTH.REGISTRATION_VERIFICATION_EMAIL,
-                element: <RegistrationVerificationEmail />,
             },
             { path: ROUTES.AUTH.UPDATE_PASSWORD, element: <UpdatePassword /> },
         ],

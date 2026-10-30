@@ -1,14 +1,14 @@
 import axiosInstance from '../../instance';
-import { onError, onSuccess } from '../../utils';
+import { errorToast, successToast } from '../../utils';
 import {
     extractList,
     getEnvelopeMessage,
     getEnvelopeResult,
     getEnvelopeTotal,
 } from './envelope';
-import { post, postWithoutBody, put } from './http';
+import { deleteRequest, post, postWithoutBody } from './http';
 
-const REQUEST_BUILDERS = { POST: post, PUT: put };
+const REQUEST_BUILDERS = { POST: post, DELETE: deleteRequest };
 
 const dedupeQueryKeys = (queryKeys = []) => {
     const seen = new Set();
@@ -23,10 +23,6 @@ const dedupeQueryKeys = (queryKeys = []) => {
     });
 };
 
-// Build a useDynamicMutation action config from a path. Pass `successMessage`
-// for a toast, `invalidateQueryKeys` to refresh lists, `mapPayload` to reshape
-// the body, `withBody: false` for bodyless POSTs, or a full `onSuccess`
-// override for custom post-success flows.
 export const createMutationAction = ({
     path,
     method = 'POST',
@@ -37,26 +33,26 @@ export const createMutationAction = ({
     onSuccess: onSuccessOverride,
 }) => {
     const build = REQUEST_BUILDERS[method] ?? post;
-    const mutationFn = withBody ? build(path, mapPayload) : postWithoutBody(path);
+    const mutationFn =
+        withBody || method === 'DELETE' ? build(path, mapPayload) : postWithoutBody(path);
 
     return {
         method,
         endpoint: path,
         mutationFn,
-        onError,
+        errorToast,
         invalidateQueryKeys: dedupeQueryKeys(invalidateQueryKeys),
         ...(onSuccessOverride
             ? { onSuccess: onSuccessOverride }
             : successMessage
               ? {
                     onSuccess: ({ response }) =>
-                        onSuccess(getEnvelopeMessage(response, successMessage)),
+                        successToast(getEnvelopeMessage(response, successMessage)),
                 }
               : {}),
     };
 };
 
-// Build a usePaginatedQuery / useQuery-compatible fetch action.
 export const createFetchAction = ({
     queryKey,
     path,

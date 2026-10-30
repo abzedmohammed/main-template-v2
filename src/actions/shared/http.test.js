@@ -1,6 +1,8 @@
 import axiosInstance from '../../instance';
 import {
+    deleteRequest,
     downloadBlob,
+    fillPath,
     post,
     postWithoutBody,
     stripPaginationParams,
@@ -8,7 +10,7 @@ import {
 } from './http';
 
 vi.mock('../../instance', () => ({
-    default: { post: vi.fn(), put: vi.fn() },
+    default: { post: vi.fn(), delete: vi.fn() },
 }));
 
 const ok = (envelope = { success: true, data: null }) => ({ data: envelope });
@@ -51,6 +53,49 @@ describe('postWithoutBody', () => {
         await postWithoutBody('/ping')();
 
         expect(axiosInstance.post).toHaveBeenCalledWith('/ping');
+    });
+});
+
+describe('fillPath', () => {
+    it('replaces placeholders with URL-encoded values', () => {
+        expect(fillPath('/api/delete/{id}', { id: 'a b' })).toBe('/api/delete/a%20b');
+    });
+
+    it('throws when a placeholder value is missing', () => {
+        expect(() => fillPath('/api/delete/{id}', {})).toThrow(
+            'Missing "id" for /api/delete/{id}'
+        );
+    });
+});
+
+describe('deleteRequest', () => {
+    it('sends DELETE to the filled path with no body', async () => {
+        axiosInstance.delete.mockResolvedValue(ok());
+
+        const response = await deleteRequest('/api/delete/{id}')({ id: 7 });
+
+        expect(axiosInstance.delete).toHaveBeenCalledWith('/api/delete/7');
+        expect(response).toEqual(ok());
+    });
+
+    it('reads the id through mapPayload', async () => {
+        axiosInstance.delete.mockResolvedValue(ok());
+
+        await deleteRequest('/api/delete/{id}', (data) => ({ id: data.exmId }))({
+            exmId: 3,
+        });
+
+        expect(axiosInstance.delete).toHaveBeenCalledWith('/api/delete/3');
+    });
+
+    it('throws with the envelope message on success: false', async () => {
+        axiosInstance.delete.mockResolvedValue({
+            data: { success: false, message: 'Not found' },
+        });
+
+        await expect(deleteRequest('/api/delete/{id}')({ id: 7 })).rejects.toThrow(
+            'Not found'
+        );
     });
 });
 

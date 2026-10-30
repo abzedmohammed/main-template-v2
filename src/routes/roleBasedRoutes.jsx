@@ -1,14 +1,13 @@
 import { Unauthorized } from '../pages';
-import { adminRoutes } from './adminRoutes';
+import { exampleRoutes } from './exampleRoutes';
 import { authRoutes } from './authRoutes';
 import { homeRoutes } from './homeRoutes';
 
 export const ROLE_ROUTE_MAPPING = {
-    ADMIN: [...adminRoutes],
+    ADMIN: [...exampleRoutes],
+    USER: [...exampleRoutes],
 };
 
-// Authenticated users whose role has no route tree are locked out — every path
-// renders Unauthorized. (Unauthenticated users get the public routes instead.)
 const lockedOutRoutes = [{ path: '*', element: <Unauthorized /> }];
 
 export const getRoutesForRole = (userRole) => {

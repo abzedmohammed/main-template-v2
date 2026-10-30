@@ -5,6 +5,8 @@ const initialState = {
     user: null,
     userId: null,
     userRole: null,
+    maskedEmail: null,
+    otpTimer: null,
 };
 
 export const authSlice = createSlice({
@@ -14,10 +16,18 @@ export const authSlice = createSlice({
         userIdStateFn: (state, action) => {
             state.userId = action.payload;
         },
+        maskedEmailStateFn: (state, action) => {
+            state.maskedEmail = action.payload;
+        },
+        authOtpStateFn: (state, action) => {
+            state.otpTimer = action.payload;
+        },
         authStateFn: (state, action) => {
             state.user = action.payload;
             state.isActive = true;
             state.userId = null;
+            state.maskedEmail = null;
+            state.otpTimer = null;
             state.userRole = action.payload?.role;
         },
         logoutStateFn: () => {
@@ -28,4 +38,10 @@ export const authSlice = createSlice({
 
 export default authSlice.reducer;
 
-export const { userIdStateFn, authStateFn, logoutStateFn } = authSlice.actions;
+export const {
+    userIdStateFn,
+    maskedEmailStateFn,
+    authOtpStateFn,
+    authStateFn,
+    logoutStateFn,
+} = authSlice.actions;

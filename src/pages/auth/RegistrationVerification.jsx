@@ -1,38 +1,35 @@
-import { Form } from 'antd';
 import { Navigate } from 'react-router-dom';
 import { ROUTES } from '../../routes';
 import { accountVerification } from '../../actions/auth';
-import { AuthLogoComponent, OTPFormComponent } from './components';
+import { OTPFormComponent } from './components';
 import { useOtpVerificationFlow } from './hooks/useOtpVerificationFlow';
 
 export default function RegistrationVerification() {
-    const [form] = Form.useForm();
+    const {
+        form,
+        userId,
+        maskedEmail,
+        timer,
+        setOtp,
+        handleResendOtp,
+        handleVerifyOtp,
+        isProcessing,
+    } = useOtpVerificationFlow({ verifyAction: accountVerification });
 
-    const { userId, timer, setOtp, handleResendOtp, handleVerifyOtp, isProcessing } =
-        useOtpVerificationFlow({
-            verifyAction: accountVerification,
-        });
-
-    if (!userId) {
-        return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
-    }
+    // if (!userId) {
+    //     return <Navigate to={ROUTES.AUTH.REGISTER} replace />;
+    // }
 
     return (
-        <div className="auth_main_alt">
-            <div className="auth_main_alt_component">
-                <AuthLogoComponent>
-                    <OTPFormComponent
-                        form={form}
-                        setOtp={setOtp}
-                        onFinish={handleVerifyOtp}
-                        isProcessing={isProcessing}
-                        handleResendOtp={handleResendOtp}
-                        timer={timer}
-                        otpText="Enter the code sent to your phone number"
-                        verificationText="Verify Phone Number"
-                    />
-                </AuthLogoComponent>
-            </div>
-        </div>
+        <OTPFormComponent
+            form={form}
+            setOtp={setOtp}
+            onFinish={handleVerifyOtp}
+            isProcessing={isProcessing}
+            handleResendOtp={handleResendOtp}
+            timer={timer}
+            maskedEmail={maskedEmail}
+            title="Verify your account"
+        />
     );
 }

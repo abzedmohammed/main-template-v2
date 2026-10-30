@@ -2,6 +2,7 @@ import flags from 'react-phone-number-input/flags';
 
 import {
     FormInput,
+    FormInputCheckbox,
     FormInputEmail,
     FormInputPassword,
     FormInputPhone,
@@ -10,104 +11,144 @@ import {
     TextDynamic,
 } from 'abzed-utils';
 import { Link } from 'react-router-dom';
-import { GoogleSvg } from '../../../svgs';
+import { KeySvg, LockSvg, MailSvg, UserSvg } from '../../../svgs';
 import { ROUTES } from '../../../routes';
+import { Form } from 'antd';
+import { acceptTermsRule, confirmPasswordRule, fullNameRule, passwordStrengthRule } from '../../../utils';
+import PasswordChecklist from './PasswordChecklist';
+
+const stopToggle = (e) => e.stopPropagation();
+
+const termsLabel = (
+    <span>
+        I agree to the{' '}
+        <Link
+            to={ROUTES.TERMS}
+            target="_blank"
+            rel="noreferrer"
+            className="sanctuary_link font-semibold"
+            onClick={stopToggle}
+        >
+            Terms of Service
+        </Link>{' '}
+        and{' '}
+        <Link
+            to={ROUTES.PRIVACY}
+            target="_blank"
+            rel="noreferrer"
+            className="sanctuary_link font-semibold"
+            onClick={stopToggle}
+        >
+            Privacy Policy
+        </Link>
+    </span>
+);
 
 export default function RegisterFormComponent({ form, onFinish, isProcessing }) {
+    const password = Form.useWatch('password', form) || '';
+
     return (
-        <div className="w-full fx_center">
-            <div className="w-full md:w-95 p-3 md:p-0 fx_col gap-[1.88rem] mt-5">
-                <div className="fx_col text-center gap-6">
-                    <TextDynamic
-                        color="#121212"
-                        text={'Welcome'}
-                        className={'txt_1_875_bold'}
+        <div className="p-6 fx_col gap-6">
+            <div className="fx_col_center text-center gap-1">
+                <TextDynamic
+                    tagName="h1"
+                    text="Create Account"
+                    className="txt_1_875_bold"
+                />
+                <TextDynamic
+                    tagName="p"
+                    text="Join AbzedConnect to start building your digital sanctuary."
+                    className="txt_9375"
+                    color="var(--color-text-muted)"
+                />
+            </div>
+
+            <AntdForm form={form} handleSubmit={onFinish} formName="register">
+                <div className="w-full fx_col gap-4">
+                    <FormInput
+                        label="Full Name"
+                        inputName="fullName"
+                        inputClassName="primary_input"
+                        placeholder="Enter your full name"
+                        prefix={<UserSvg className="text-text-muted" />}
+                        extraRules={[fullNameRule]}
                     />
-                    <TextDynamic
-                        color="#3D3D3D"
-                        text={'Please fill in your personal details.'}
-                        className={'txt_9375 max-w-[290px] md:max-w-full'}
+
+                    <FormInputEmail
+                        label="Email"
+                        inputName="email"
+                        inputClassName="primary_input"
+                        placeholder="email@example.com"
+                        prefix={<MailSvg className="text-text-muted" />}
                     />
-                </div>
 
-                <AntdForm form={form} handleSubmit={onFinish} formName={'login'}>
-                    <div className="w-full fx_col gap-5">
-                        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                            <FormInput
-                                inputClassName={'auth_input'}
-                                inputName={'usrFirstName'}
-                                label={'First name'}
-                            />
+                    <FormInputPhone
+                        label="Phone Number"
+                        inputName="phone"
+                        inputClassName="primary_input"
+                        placeholder="+254 7XX XXX XXX"
+                        prefix={<MailSvg className="text-text-muted" />}
+                        flags={flags}
+                    />
 
-                            <FormInput
-                                inputClassName={'auth_input'}
-                                inputName={'usrLastName'}
-                                label={'Last name'}
-                            />
-                        </div>
-
-                        <FormInput
-                            inputClassName={'auth_input'}
-                            label={'ID number'}
-                            inputName={'usrNationalId'}
-                        />
-
-                        <FormInputEmail
-                            inputClassName={'auth_input'}
-                            inputName={'usrEmail'}
-                            label={'Email'}
-                        />
-
-                        <FormInputPhone
-                            flags={flags}
-                            inputClassName={'auth_input'}
-                            inputName={'usrMobileNumber'}
-                            label={'Phone Number'}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <FormInputPassword
+                            label="Password"
+                            inputName="password"
+                            inputClassName="primary_input"
+                            placeholder="••••••••"
+                            prefix={<KeySvg className="text-text-muted" />}
+                            extraRules={[passwordStrengthRule]}
                         />
 
                         <FormInputPassword
-                            inputClassName={'auth_input'}
-                            inputName={'usrEncryptedPassword'}
-                            placeholder="Password"
-                            label="Password"
+                            label="Confirm"
+                            inputName="confirmPassword"
+                            inputClassName="primary_input"
+                            placeholder="••••••••"
+                            prefix={<LockSvg className="text-text-muted" />}
+                            extraRules={[confirmPasswordRule]}
                         />
                     </div>
 
-                    <div className="fx_col mt-[1.56rem] gap-[1.88rem]">
-                        <DynamicBtn
-                            loading={isProcessing}
-                            width={'100%'}
-                            className={'primary_btn'}
-                            text={'Continue'}
-                            type="submit"
-                        />
+                    <PasswordChecklist password={password} />
 
-                        <div className="w-full h-[.03125rem] bg-[#E5E5E5]"></div>
+                    <FormInputCheckbox
+                        inputName="agreement"
+                        className="sanctuary_checkbox"
+                        label={termsLabel}
+                        required={false}
+                        extraRules={[acceptTermsRule]}
+                    />
+                </div>
 
-                        <DynamicBtn
-                            className={'google_btn'}
-                            text={'Or sign up with Google'}
-                            width={'100%'}
-                            icon={<GoogleSvg />}
-                        />
+                <div className="mt-5">
+                    <DynamicBtn
+                        loading={isProcessing}
+                        type="submit"
+                        text="Create Account"
+                        className="primary_btn"
+                        width="100%"
+                    />
+                </div>
+            </AntdForm>
 
-                        <TextDynamic
-                            color="#3D3D3D"
-                            text={
-                                <span>
-                                    Already have an account?{' '}
-                                    <Link
-                                        className="font-bold underline! text-[#3D3D3D]!"
-                                        to={ROUTES.AUTH.LOGIN}
-                                    >
-                                        Log In
-                                    </Link>
-                                </span>
-                            }
-                            className={'txt_8125_medium'}
-                        />
-                    </div>
-                </AntdForm>
+            <div className="text-center">
+                <TextDynamic
+                    text={
+                        <span>
+                            Already have an account?{' '}
+                            <Link
+                                to={ROUTES.AUTH.LOGIN}
+                                className="underline font-semibold"
+                            >
+                                Login instead
+                            </Link>
+                        </span>
+                    }
+                    className="txt_9375"
+                    color="var(--color-text-muted)"
+                />
             </div>
         </div>
     );

@@ -1,18 +1,19 @@
 import projectLogo from './assets/img/logo.png';
-import { onError as onErrorBase, onSuccess as onSuccessBase } from 'abzed-utils';
+import projectLogoMark from './assets/img/logo.png';
 import {
     errorNotification,
     infoNotification,
     successNotification,
-} from './components/notifications/toastNotification';
+} from './components/notifications';
+import { validatePassword } from 'abzed-utils';
 
 export const url = import.meta.env.VITE_API_URL;
 export const logoutUrl = import.meta.env.VITE_LOGOUT_URL;
 export const logo = projectLogo;
+export const logoMark = projectLogoMark;
 export const defaultTimer = Number.parseInt(import.meta.env.VITE_DEFAULT_TIMER, 10) || 10;
 
-// Session timing — overridable via env, with sensible defaults. Consumed by
-// useTokenExpiryChecker + tokenService.getSessionStatus.
+
 const readEnvNumber = (key, fallback) => {
     const value = Number.parseInt(import.meta.env[key], 10);
     return Number.isFinite(value) ? value : fallback;
@@ -39,14 +40,48 @@ export const sessionExpiryCountdownSeconds = readEnvNumber(
     30
 );
 
-export const onSuccess = (message) => {
-    onSuccessBase(message, successNotification);
+export const successToast = (message) => {
+    successNotification(message);
 };
 
-export const onInfo = (message) => {
-    onSuccessBase(message, infoNotification);
+export const infoToast = (message) => {
+    infoNotification(message);
 };
 
-export const onError = (message) => {
-    onErrorBase(message, errorNotification);
+export const errorToast = (message) => {
+    errorNotification(message);
+};
+
+export const fullNameRule = {
+    validator: (_, value) => {
+        if (!value) return Promise.resolve(); // `required` handles empty
+        const parts = value.trim().split(/\s+/).filter(Boolean);
+        return parts.length >= 2
+            ? Promise.resolve()
+            : Promise.reject(new Error('Enter your full name (at least 2 names)'));
+    },
+};
+
+export const passwordStrengthRule = {
+    validator: (_, value) => {
+        if (!value) return Promise.resolve(); // `required` handles empty
+        const result = validatePassword(value);
+        return result === true ? Promise.resolve() : Promise.reject(new Error(result));
+    },
+};
+
+export const confirmPasswordRule = ({ getFieldValue }) => ({
+    validator(_, value) {
+        if (!value || getFieldValue('password') === value) {
+            return Promise.resolve();
+        }
+        return Promise.reject(new Error('Passwords do not match'));
+    },
+});
+
+export const acceptTermsRule = {
+    validator: (_, value) =>
+        value
+            ? Promise.resolve()
+            : Promise.reject(new Error('Please accept the Terms and Privacy Policy')),
 };

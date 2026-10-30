@@ -1,19 +1,34 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useDynamicMutation } from 'abzed-utils';
 import { accountResendOtp } from '../../../actions/auth';
-import { defaultTimer } from '../../../utils';
+import { useFormMutation } from '../../../hooks';
 
 export const useOtpVerificationFlow = ({ verifyAction }) => {
-    const { userId } = useSelector((state) => state.auth);
+    const { userId, maskedEmail, otpTimer } = useSelector((state) => state.auth);
 
     const [otp, setOtp] = useState('');
-    const [timer, setTimer] = useState(defaultTimer);
+    const [timer, setTimer] = useState(otpTimer);
 
-    const { mutate: verifyOtp, isPending: isVerifying } =
-        useDynamicMutation(verifyAction);
-    const { mutate: resendOtp, isPending: isResending } =
-        useDynamicMutation(accountResendOtp);
+    const verify = useFormMutation({
+        action: verifyAction,
+        beforeSubmit: () => Boolean(userId),
+        options: { mapValues: () => ({ reqId: userId, otp }) },
+    });
+    
+    const resend = useFormMutation(accountResendOtp, {
+        mapValues: () => ({ reqId: userId }),
+        successToast: () => setTimer(otpTimer),
+    });
+
+    const handleResendOtp = useCallback(() => {
+        if (!userId || timer > 0 || resend.isProcessing) {
+            return;
+        }
+
+        resend.onFinish({});
+    }, [resend, timer, userId]);
+
+    const handleVerifyOtp = useCallback(() => verify.onFinish({}), [verify]);
 
     useEffect(() => {
         if (timer <= 0) {
@@ -27,38 +42,14 @@ export const useOtpVerificationFlow = ({ verifyAction }) => {
         return () => clearInterval(intervalId);
     }, [timer]);
 
-    const handleResendOtp = useCallback(() => {
-        if (!userId || timer > 0 || isResending) {
-            return;
-        }
-
-        resendOtp(
-            { usrId: userId },
-            {
-                onSuccess: () => {
-                    setTimer(defaultTimer);
-                },
-            }
-        );
-    }, [isResending, resendOtp, timer, userId]);
-
-    const handleVerifyOtp = useCallback(() => {
-        if (!userId) {
-            return;
-        }
-
-        verifyOtp({
-            usrId: userId,
-            usrOTP: otp,
-        });
-    }, [otp, userId, verifyOtp]);
-
     return {
+        form: verify.form,
         userId,
+        maskedEmail,
         timer,
         setOtp,
         handleResendOtp,
         handleVerifyOtp,
-        isProcessing: isVerifying || isResending,
+        isProcessing: verify.isProcessing || resend.isProcessing,
     };
 };

@@ -3,7 +3,7 @@ import { onError, onSuccess } from '../../utils';
 import { createFetchAction, createMutationAction } from './factories';
 
 vi.mock('../../instance', () => ({
-    default: { post: vi.fn(), put: vi.fn(), get: vi.fn() },
+    default: { post: vi.fn(), delete: vi.fn(), get: vi.fn() },
 }));
 
 vi.mock('../../utils', () => ({
@@ -25,14 +25,31 @@ describe('createMutationAction', () => {
         expect(typeof action.mutationFn).toBe('function');
     });
 
-    it('uses PUT when method is PUT', async () => {
-        axiosInstance.put.mockResolvedValue({ data: { success: true } });
+    it('sends DELETE to the path with the id filled in', async () => {
+        axiosInstance.delete.mockResolvedValue({ data: { success: true } });
 
-        const action = createMutationAction({ path: '/update', method: 'PUT' });
-        await action.mutationFn({ id: 1 });
+        const action = createMutationAction({
+            path: '/api/delete/{id}',
+            method: 'DELETE',
+        });
+        await action.mutationFn({ id: 7 });
 
-        expect(action.method).toBe('PUT');
-        expect(axiosInstance.put).toHaveBeenCalledWith('/update', { id: 1 });
+        expect(action.method).toBe('DELETE');
+        expect(axiosInstance.delete).toHaveBeenCalledWith('/api/delete/7');
+        expect(axiosInstance.post).not.toHaveBeenCalled();
+    });
+
+    it('still sends DELETE when withBody is false', async () => {
+        axiosInstance.delete.mockResolvedValue({ data: { success: true } });
+
+        const action = createMutationAction({
+            path: '/api/delete/{id}',
+            method: 'DELETE',
+            withBody: false,
+        });
+        await action.mutationFn({ id: 7 });
+
+        expect(axiosInstance.delete).toHaveBeenCalledWith('/api/delete/7');
     });
 
     it('deduplicates invalidateQueryKeys', () => {
