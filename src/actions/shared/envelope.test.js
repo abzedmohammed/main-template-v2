@@ -5,8 +5,11 @@ import {
     getEnvelopeTotal,
     getResponseRefreshToken,
     getResponseToken,
+    getResponseMaskedEmail,
+    getResponseOtpTimer,
     getResponseUserId,
 } from './envelope';
+import { defaultTimer } from '../../utils';
 
 // A full Axios response: the envelope lives under `.data`.
 const axiosResponse = (envelope) => ({ status: 200, data: envelope });
@@ -41,10 +44,10 @@ describe('getEnvelopeMessage', () => {
         expect(getEnvelopeMessage(response)).toBe('Saved');
     });
 
-    it('unwraps a nested message object', () => {
-        const response = axiosResponse({ message: { message: 'Nested' }, data: null });
-
-        expect(getEnvelopeMessage(response)).toBe('Nested');
+    it('keeps an empty-string message rather than the fallback', () => {
+        expect(
+            getEnvelopeMessage(axiosResponse({ message: '', data: null }), 'Default')
+        ).toBe('');
     });
 
     it('falls back when no message is present', () => {
@@ -59,9 +62,12 @@ describe('extractList', () => {
         expect(extractList([1, 2])).toEqual([1, 2]);
     });
 
-    it('pulls the array out of common wrapper keys', () => {
-        expect(extractList({ content: [{ id: 1 }] })).toEqual([{ id: 1 }]);
-        expect(extractList({ notifications: [{ id: 2 }] })).toEqual([{ id: 2 }]);
+    it('pulls the array out of a nested result key', () => {
+        expect(extractList({ result: [{ id: 1 }] })).toEqual([{ id: 1 }]);
+    });
+
+    it('ignores other wrapper keys', () => {
+        expect(extractList({ content: [{ id: 1 }] })).toEqual([]);
     });
 
     it('returns an empty array when there is no list', () => {
@@ -100,12 +106,12 @@ describe('token + id readers', () => {
         ).toBe('r');
     });
 
-    it('reads the user id across usrId / userId / nested user', () => {
+    it('reads the flow id across usrId / reqId / nested user', () => {
         expect(
             getResponseUserId(axiosResponse({ data: { result: { usrId: '1' } } }))
         ).toBe('1');
         expect(
-            getResponseUserId(axiosResponse({ data: { result: { userId: '2' } } }))
+            getResponseUserId(axiosResponse({ data: { result: { reqId: '2' } } }))
         ).toBe('2');
         expect(
             getResponseUserId(
@@ -117,5 +123,30 @@ describe('token + id readers', () => {
     it('returns null when the field is absent', () => {
         expect(getResponseToken(axiosResponse({ data: { result: {} } }))).toBeNull();
         expect(getResponseUserId(axiosResponse({ data: { result: {} } }))).toBeNull();
+    });
+});
+
+describe('OTP flow readers', () => {
+    it('reads the masked email', () => {
+        expect(
+            getResponseMaskedEmail(
+                axiosResponse({ data: { result: { maskedEmail: 'ja****@example.com' } } })
+            )
+        ).toBe('ja****@example.com');
+        expect(
+            getResponseMaskedEmail(axiosResponse({ data: { result: {} } }))
+        ).toBeNull();
+    });
+
+    it('converts otpTimer from minutes to seconds', () => {
+        expect(
+            getResponseOtpTimer(axiosResponse({ data: { result: { otpTimer: 5 } } }))
+        ).toBe(300);
+    });
+
+    it('falls back to VITE_DEFAULT_TIMER when otpTimer is absent', () => {
+        expect(getResponseOtpTimer(axiosResponse({ data: { result: {} } }))).toBe(
+            defaultTimer
+        );
     });
 });

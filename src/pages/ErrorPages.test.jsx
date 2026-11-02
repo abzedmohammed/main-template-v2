@@ -5,11 +5,6 @@ import { MemoryRouter, RouterProvider, createMemoryRouter } from 'react-router-d
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { ErrorPage, NotFound, Unauthorized } from './ErrorPages';
 
-// Only ROUTES is needed — skip loading the whole route/page tree.
-vi.mock('../routes', async () => ({
-    ROUTES: (await import('../routes/paths')).ROUTES,
-}));
-
 const makeStore = (auth = {}) => {
     const authSlice = createSlice({
         name: 'auth',

@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 
-vi.mock('./adminRoutes', () => ({
-    adminRoutes: [{ path: '/dashboard', element: 'admin-dashboard' }],
+vi.mock('./exampleRoutes', () => ({
+    exampleRoutes: [{ path: '/dashboard', element: 'dashboard' }],
 }));
 vi.mock('./authRoutes', () => ({
     authRoutes: [{ path: '/auth/login', element: 'login' }],
@@ -18,6 +18,13 @@ const { getRoutesForRole, ROLE_ROUTE_MAPPING } = await import('./roleBasedRoutes
 describe('getRoutesForRole', () => {
     it('returns the admin tree for ADMIN users', () => {
         expect(getRoutesForRole('ADMIN')).toEqual(ROLE_ROUTE_MAPPING.ADMIN);
+    });
+
+    it('returns the same tree for USER users', () => {
+        expect(getRoutesForRole('USER')).toEqual(ROLE_ROUTE_MAPPING.USER);
+        expect(ROLE_ROUTE_MAPPING.USER).toEqual([
+            { path: '/dashboard', element: 'dashboard' },
+        ]);
     });
 
     it('is case-insensitive on the role key', () => {

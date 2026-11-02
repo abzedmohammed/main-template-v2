@@ -13,30 +13,32 @@ export const logo = projectLogo;
 export const logoMark = projectLogoMark;
 export const defaultTimer = Number.parseInt(import.meta.env.VITE_DEFAULT_TIMER, 10) || 10;
 
-
-const readEnvNumber = (key, fallback) => {
-    const value = Number.parseInt(import.meta.env[key], 10);
-    return Number.isFinite(value) ? value : fallback;
+const toNumber = (value, fallback) => {
+    const number = Number.parseInt(value, 10);
+    return Number.isFinite(number) ? number : fallback;
 };
 
-export const sessionIdleTimeoutMinutes = readEnvNumber(
-    'VITE_SESSION_IDLE_TIMEOUT_MINUTES',
+// Always reference env vars statically (import.meta.env.VITE_X). A dynamic
+// import.meta.env[key] makes Vite inline EVERY VITE_* var into the bundle,
+// leaking any token that happens to be set at build time.
+export const sessionIdleTimeoutMinutes = toNumber(
+    import.meta.env.VITE_SESSION_IDLE_TIMEOUT_MINUTES,
     15
 );
-export const sessionMaxDurationMinutes = readEnvNumber(
-    'VITE_SESSION_MAX_DURATION_MINUTES',
+export const sessionMaxDurationMinutes = toNumber(
+    import.meta.env.VITE_SESSION_MAX_DURATION_MINUTES,
     60
 );
-export const sessionAbsoluteMaxMinutes = readEnvNumber(
-    'VITE_SESSION_ABSOLUTE_MAX_MINUTES',
+export const sessionAbsoluteMaxMinutes = toNumber(
+    import.meta.env.VITE_SESSION_ABSOLUTE_MAX_MINUTES,
     240
 );
-export const sessionWarningCountdownSeconds = readEnvNumber(
-    'VITE_SESSION_WARNING_COUNTDOWN_SECONDS',
+export const sessionWarningCountdownSeconds = toNumber(
+    import.meta.env.VITE_SESSION_WARNING_COUNTDOWN_SECONDS,
     60
 );
-export const sessionExpiryCountdownSeconds = readEnvNumber(
-    'VITE_SESSION_EXPIRY_COUNTDOWN_SECONDS',
+export const sessionExpiryCountdownSeconds = toNumber(
+    import.meta.env.VITE_SESSION_EXPIRY_COUNTDOWN_SECONDS,
     30
 );
 

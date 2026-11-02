@@ -46,6 +46,16 @@ export default [
             ...reactHooks.configs.recommended.rules,
             'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
             'no-console': ['warn', { allow: ['warn', 'error'] }],
+            'no-restricted-syntax': [
+                'error',
+                {
+                    // import.meta.env[key] makes Vite inline every VITE_* var (tokens included).
+                    selector:
+                        "MemberExpression[computed=true] > MemberExpression.object[object.type='MetaProperty'][property.name='env']",
+                    message:
+                        'Read env vars statically (import.meta.env.VITE_X); dynamic access bundles every VITE_* var.',
+                },
+            ],
             'react/react-in-jsx-scope': 'off',
             'react/prop-types': 'off',
             'react-refresh/only-export-components': [

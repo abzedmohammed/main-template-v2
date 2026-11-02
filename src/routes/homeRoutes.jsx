@@ -1,11 +1,14 @@
-import { HomeLayout } from '../components/layout';
+import { HomeLayout, RouteFallback } from '../components/layout';
 import { ErrorPage } from '../pages';
-import { Login } from '../pages/auth';
+import { lazyPage } from './lazyPage';
 
 export const homeRoutes = [
     {
         element: <HomeLayout />,
         errorElement: <ErrorPage />,
-        children: [{ index: true, element: <Login /> }],
+        HydrateFallback: RouteFallback,
+        children: [
+            { index: true, lazy: lazyPage(() => import('../pages/auth'), 'Login') },
+        ],
     },
 ];

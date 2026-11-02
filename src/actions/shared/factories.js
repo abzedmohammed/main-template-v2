@@ -30,23 +30,24 @@ export const createMutationAction = ({
     invalidateQueryKeys = [],
     mapPayload,
     withBody = true,
-    onSuccess: onSuccessOverride,
+    successToast: successOverride,
 }) => {
     const build = REQUEST_BUILDERS[method] ?? post;
     const mutationFn =
         withBody || method === 'DELETE' ? build(path, mapPayload) : postWithoutBody(path);
 
+    // `successToast` / `errorToast` are the hooks useFormMutation calls (same keys as the auth actions).
     return {
         method,
         endpoint: path,
         mutationFn,
         errorToast,
         invalidateQueryKeys: dedupeQueryKeys(invalidateQueryKeys),
-        ...(onSuccessOverride
-            ? { onSuccess: onSuccessOverride }
+        ...(successOverride
+            ? { successToast: successOverride }
             : successMessage
               ? {
-                    onSuccess: ({ response }) =>
+                    successToast: ({ response }) =>
                         successToast(getEnvelopeMessage(response, successMessage)),
                 }
               : {}),

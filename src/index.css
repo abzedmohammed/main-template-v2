@@ -38,10 +38,18 @@
     color-scheme: light;
 
     /* Field fill: a warm cream (never stark white, never grey). */
-    --input-bg: color-mix(in srgb, var(--color-surface) 93%, var(--color-announcement-amber));
+    --input-bg: color-mix(
+        in srgb,
+        var(--color-surface) 93%,
+        var(--color-announcement-amber)
+    );
 
     /* Primary button: deep navy → indigo. */
-    --btn-primary-bg: linear-gradient(135deg, var(--color-privacy-navy), var(--color-privacy-indigo));
+    --btn-primary-bg: linear-gradient(
+        135deg,
+        var(--color-privacy-navy),
+        var(--color-privacy-indigo)
+    );
 
     /* Page backdrop: a soft, warm grey wash in light mode (solid in dark). */
     --bg-gradient: linear-gradient(135deg, #faf8f5 0%, #f4f1ed 50%, #ebe7e2 100%);
@@ -60,14 +68,22 @@
         color-mix(in srgb, var(--color-family-purple) 8%, transparent),
         transparent
     );
-    --auth-glow-amber: color-mix(in srgb, var(--color-announcement-amber) 20%, transparent);
-    --auth-glow-amber-core: color-mix(in srgb, var(--color-announcement-amber) 24%, transparent);
+    --auth-glow-amber: color-mix(
+        in srgb,
+        var(--color-announcement-amber) 20%,
+        transparent
+    );
+    --auth-glow-amber-core: color-mix(
+        in srgb,
+        var(--color-announcement-amber) 24%,
+        transparent
+    );
     --auth-glow-indigo: color-mix(in srgb, var(--color-privacy-indigo) 14%, transparent);
     --auth-blend-base: normal;
     --auth-blend-depth: normal;
     --auth-blend-glow: normal;
     --auth-blend-core: normal;
-    
+
     /* Card is frosted glass so the warm backdrop shows through instead of stark white. */
     --auth-card-alpha: 58%;
 }
@@ -96,8 +112,16 @@
         color-mix(in srgb, var(--color-privacy-indigo) 10%, transparent),
         transparent
     );
-    --auth-glow-amber: color-mix(in srgb, var(--color-announcement-amber) 15%, transparent);
-    --auth-glow-amber-core: color-mix(in srgb, var(--color-announcement-amber) 25%, transparent);
+    --auth-glow-amber: color-mix(
+        in srgb,
+        var(--color-announcement-amber) 15%,
+        transparent
+    );
+    --auth-glow-amber-core: color-mix(
+        in srgb,
+        var(--color-announcement-amber) 25%,
+        transparent
+    );
     --auth-glow-indigo: color-mix(in srgb, var(--color-privacy-indigo) 20%, transparent);
     --auth-blend-base: multiply;
     --auth-blend-depth: overlay;
@@ -153,9 +177,21 @@
             color-mix(in srgb, var(--color-privacy-indigo) 10%, transparent),
             transparent
         );
-        --auth-glow-amber: color-mix(in srgb, var(--color-announcement-amber) 15%, transparent);
-        --auth-glow-amber-core: color-mix(in srgb, var(--color-announcement-amber) 25%, transparent);
-        --auth-glow-indigo: color-mix(in srgb, var(--color-privacy-indigo) 20%, transparent);
+        --auth-glow-amber: color-mix(
+            in srgb,
+            var(--color-announcement-amber) 15%,
+            transparent
+        );
+        --auth-glow-amber-core: color-mix(
+            in srgb,
+            var(--color-announcement-amber) 25%,
+            transparent
+        );
+        --auth-glow-indigo: color-mix(
+            in srgb,
+            var(--color-privacy-indigo) 20%,
+            transparent
+        );
         --auth-blend-base: multiply;
         --auth-blend-depth: overlay;
         --auth-blend-glow: screen;

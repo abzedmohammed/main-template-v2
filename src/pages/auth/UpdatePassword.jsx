@@ -1,57 +1,26 @@
-import { Form } from 'antd';
-import { PasswordFormComponent } from './components';
-import { validatePassword } from 'abzed-utils';
-import { infoToast } from '../../utils';
-import { updatePasswordAction } from '../../actions/auth';
 import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
-import { ROUTES } from '../../routes';
+import { updatePasswordAction } from '../../actions/auth';
 import { useFormMutation } from '../../hooks';
+import { ROUTES } from '../../routes';
+import { PasswordFormComponent } from './components';
 
 export default function UpdatePassword() {
-    const { userId } = useSelector((state) => state.auth);
+    const reqId = useSelector((state) => state.auth.userId);
 
-    const { form, onFinish, isProcessing } = useFormMutation({
-        action: updatePasswordAction,
-        options: {
-            mapValues: (values) => ({
-                reqId: userId,
-                password: values.password,
-            }),
-        },
-        beforeSubmit: (values) => {
-            const isPasswordValid = validatePassword(values.password);
-
-            if (typeof isPasswordValid === 'string') {
-                infoToast(isPasswordValid);
-                return false;
-            }
-
-            if (values.password.trim() !== values.confirmPassword?.trim()) {
-                infoToast('Passwords do not match');
-                return false;
-            }
-
-            return true;
-        },
+    const { form, onFinish, isProcessing } = useFormMutation(updatePasswordAction, {
+        mapValues: ({ password }) => ({ reqId, password }),
     });
-    
-    const watchedValues = Form.useWatch([], form);
 
-    if (!userId) {
+    if (!reqId) {
         return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
     }
 
     return (
-        <main className="auth_card">
-            <PasswordFormComponent
-                form={form}
-                onFinish={onFinish}
-                headerText="Create Password"
-                subHeaderText="Let's create a password to secure your account."
-                isProcessing={isProcessing}
-                watchedValues={watchedValues}
-            />
-        </main>
+        <PasswordFormComponent
+            form={form}
+            onFinish={onFinish}
+            isProcessing={isProcessing}
+        />
     );
 }

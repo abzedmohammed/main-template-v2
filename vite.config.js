@@ -58,9 +58,44 @@ function stashEnvLocalDuringBuild() {
     };
 }
 
+// Long-lived vendor chunks: they change far less often than app code, so they stay
+// cached across deploys and download in parallel. Higher priority wins on overlap.
+const VENDOR_CHUNKS = [
+    {
+        name: 'vendor-react',
+        test: /node_modules[\\/](react|react-dom|scheduler|react-router(-dom)?)[\\/]/,
+        priority: 40,
+    },
+    {
+        name: 'vendor-antd',
+        test: /node_modules[\\/](antd|@ant-design|@rc-component|rc-[^\\/]+|dayjs)[\\/]/,
+        priority: 30,
+    },
+    {
+        name: 'vendor-phone',
+        test: /node_modules[\\/](react-phone-number-input|libphonenumber-js|input-format)[\\/]/,
+        priority: 20,
+    },
+    {
+        name: 'vendor-data',
+        test: /node_modules[\\/](axios|@tanstack|@reduxjs|react-redux|redux|redux-persist|immer|reselect)[\\/]/,
+        priority: 10,
+    },
+];
+
 // https://vite.dev/config/
 export default defineConfig({
     plugins: [stashEnvLocalDuringBuild(), react(), tailwindcss()],
+    build: {
+        // vendor-antd (~930 kB, ~300 kB gzipped) is AntD itself and can't usefully split
+        // further; everything else is far below this, so a real regression still warns.
+        chunkSizeWarningLimit: 1000,
+        rolldownOptions: {
+            output: {
+                codeSplitting: { groups: VENDOR_CHUNKS },
+            },
+        },
+    },
     test: {
         environment: 'jsdom',
         globals: true,

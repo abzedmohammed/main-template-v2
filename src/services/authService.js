@@ -1,6 +1,7 @@
 import { logoutStateFn } from '../features/auth/authSlice';
 import { logoutUrl } from '../utils';
-import { ROUTES } from '../routes';
+// From paths, not the routes barrel: the barrel loads the router, which loads this file (cycle).
+import { ROUTES } from '../routes/paths';
 import { tokenService } from './tokenService';
 import { resetStateObj } from '../features/global/globalSlice';
 

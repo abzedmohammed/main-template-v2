@@ -1,14 +1,19 @@
 import axiosInstance from '../../instance';
-import { onError, onSuccess } from '../../utils';
-import { createFetchAction, createMutationAction } from './factories';
+import { errorToast, successToast } from '../../utils';
+import {
+    createFetchAction,
+    createMutationAction,
+    readList,
+    readResult,
+} from './factories';
 
 vi.mock('../../instance', () => ({
     default: { post: vi.fn(), delete: vi.fn(), get: vi.fn() },
 }));
 
 vi.mock('../../utils', () => ({
-    onError: vi.fn(),
-    onSuccess: vi.fn(),
+    errorToast: vi.fn(),
+    successToast: vi.fn(),
 }));
 
 beforeEach(() => {
@@ -16,12 +21,12 @@ beforeEach(() => {
 });
 
 describe('createMutationAction', () => {
-    it('builds a POST action config wired to onError', () => {
+    it('builds a POST action config wired to errorToast', () => {
         const action = createMutationAction({ path: '/save' });
 
         expect(action.method).toBe('POST');
         expect(action.endpoint).toBe('/save');
-        expect(action.onError).toBe(onError);
+        expect(action.errorToast).toBe(errorToast);
         expect(typeof action.mutationFn).toBe('function');
     });
 
@@ -67,9 +72,11 @@ describe('createMutationAction', () => {
             successMessage: 'Fallback',
         });
 
-        action.onSuccess({ response: { data: { message: 'From server', data: null } } });
+        action.successToast({
+            response: { data: { message: 'From server', data: null } },
+        });
 
-        expect(onSuccess).toHaveBeenCalledWith('From server');
+        expect(successToast).toHaveBeenCalledWith('From server');
     });
 
     it('falls back to successMessage when the envelope has no message', () => {
@@ -78,26 +85,26 @@ describe('createMutationAction', () => {
             successMessage: 'Fallback',
         });
 
-        action.onSuccess({ response: { data: { data: null } } });
+        action.successToast({ response: { data: { data: null } } });
 
-        expect(onSuccess).toHaveBeenCalledWith('Fallback');
+        expect(successToast).toHaveBeenCalledWith('Fallback');
     });
 
-    it('prefers an explicit onSuccess override', () => {
+    it('prefers an explicit successToast override', () => {
         const override = vi.fn();
         const action = createMutationAction({
             path: '/save',
             successMessage: 'ignored',
-            onSuccess: override,
+            successToast: override,
         });
 
-        expect(action.onSuccess).toBe(override);
+        expect(action.successToast).toBe(override);
     });
 
-    it('omits onSuccess when neither successMessage nor override is given', () => {
+    it('omits successToast when neither successMessage nor override is given', () => {
         const action = createMutationAction({ path: '/save' });
 
-        expect(action.onSuccess).toBeUndefined();
+        expect(action.successToast).toBeUndefined();
     });
 
     it('sends no body when withBody is false', async () => {
@@ -135,5 +142,34 @@ describe('createFetchAction', () => {
         expect(axiosInstance.get).toHaveBeenCalledWith('/list', {
             params: { status: 'ACTIVE' },
         });
+    });
+});
+
+describe('readResult / readList', () => {
+    it('readResult resolves to the business payload', async () => {
+        const request = Promise.resolve({
+            data: { success: true, data: { result: { usrId: '1' } } },
+        });
+
+        await expect(readResult(request)).resolves.toEqual({ usrId: '1' });
+    });
+
+    it('readList resolves to { result, total }', async () => {
+        const request = Promise.resolve({
+            data: { success: true, data: { result: [{ id: 1 }] }, total: 1 },
+        });
+
+        await expect(readList(request)).resolves.toEqual({
+            result: [{ id: 1 }],
+            total: 1,
+        });
+    });
+
+    it('readList returns an empty list when the result is not an array', async () => {
+        const request = Promise.resolve({
+            data: { success: true, data: { result: null } },
+        });
+
+        await expect(readList(request)).resolves.toEqual({ result: [], total: 0 });
     });
 });

@@ -1,35 +1,28 @@
 import { Navigate } from 'react-router-dom';
-import { ROUTES } from '../../routes';
 import { accountVerification } from '../../actions/auth';
+import { ROUTES } from '../../routes';
 import { OTPFormComponent } from './components';
-import { useOtpVerificationFlow } from './hooks/useOtpVerificationFlow';
+import { useOtpVerificationFlow } from './hooks';
 
 export default function RegistrationVerification() {
-    const {
-        form,
-        userId,
-        maskedEmail,
-        timer,
-        setOtp,
-        handleResendOtp,
-        handleVerifyOtp,
-        isProcessing,
-    } = useOtpVerificationFlow({ verifyAction: accountVerification });
+    const { userId, ...otp } = useOtpVerificationFlow({
+        verifyAction: accountVerification,
+    });
 
-    // if (!userId) {
-    //     return <Navigate to={ROUTES.AUTH.REGISTER} replace />;
-    // }
+    if (!userId) {
+        return <Navigate to={ROUTES.AUTH.LOGIN} replace />;
+    }
 
     return (
         <OTPFormComponent
-            form={form}
-            setOtp={setOtp}
-            onFinish={handleVerifyOtp}
-            isProcessing={isProcessing}
-            handleResendOtp={handleResendOtp}
-            timer={timer}
-            maskedEmail={maskedEmail}
-            title="Verify your account"
+            title="Verify your email"
+            form={otp.form}
+            setOtp={otp.setOtp}
+            onFinish={otp.handleVerifyOtp}
+            isProcessing={otp.isProcessing}
+            handleResendOtp={otp.handleResendOtp}
+            timer={otp.timer}
+            maskedEmail={otp.maskedEmail}
         />
     );
 }

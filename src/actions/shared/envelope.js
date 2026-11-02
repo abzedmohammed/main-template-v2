@@ -2,7 +2,7 @@
 //   { success, message, data: { result }, total, token, ... }
 //
 
-import { defaultTimer } from "../../utils";
+import { defaultTimer } from '../../utils';
 
 const ENVELOPE_MARKERS = ['success', 'data', 'token', 'message'];
 const LIST_KEYS = ['result'];
@@ -67,7 +67,7 @@ export const getResponseOtpTimer = (response = {}) => {
     if (minutes !== null && minutes !== undefined) {
         return Math.floor(minutes * 60);
     }
-    
+
     return defaultTimer;
 };
 

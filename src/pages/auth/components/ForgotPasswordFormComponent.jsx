@@ -1,52 +1,43 @@
-import { Link } from 'react-router-dom';
-import { FormInputEmail, AntdForm, DynamicBtn, TextDynamic } from 'abzed-utils';
+import { AntdForm, DynamicBtn, FormInputEmail } from 'abzed-utils';
 import { ROUTES } from '../../../routes';
 import { MailSvg } from '../../../svgs';
+import AuthCard from './AuthCard';
+import AuthLink from './AuthLink';
 
 export default function ForgotPasswordFormComponent({ form, onFinish, isProcessing }) {
     return (
-        <div className="p-3 md:p-0 fx_col gap-5 mt-5 md:mt-[4.69rem]">
-            <div className="fx_col text-center gap-6 mb-[1.88rem]">
-                <TextDynamic text={'Reset your password'} className={'txt_1_875_bold'} />
-
-                <TextDynamic
-                    tagName="p"
-                    text="Enter your email and we'll send a verification code to reset your password."
-                    className="txt_9375"
-                    color="var(--color-text-muted)"
+        <AuthCard
+            title="Reset your password"
+            subtitle="Enter your email and we'll send you a verification code."
+            footer={
+                <AuthLink
+                    prompt="Remember your password?"
+                    text="Log in"
+                    to={ROUTES.AUTH.LOGIN}
                 />
-            </div>
-
-            <AntdForm form={form} handleSubmit={onFinish} formName={'forgot-password'}>
-                <FormInputEmail
-                    label="Email"
-                    inputName="email"
-                    inputClassName="primary_input"
-                    placeholder="Enter your email"
-                    prefix={<MailSvg className="text-text-muted" />}
-                />
-
-                <div className="fx_col mt-10 gap-10">
-                    <DynamicBtn
-                        width={'100%'}
-                        className={'primary_btn'}
-                        text={'Send code'}
-                        type="submit"
-                        loading={isProcessing}
+            }
+        >
+            <AntdForm form={form} handleSubmit={onFinish} formName="forgot-password">
+                <div className="w-full fx_col gap-4">
+                    <FormInputEmail
+                        label="Email"
+                        inputName="email"
+                        inputClassName="primary_input"
+                        placeholder="email@example.com"
+                        prefix={<MailSvg className="text-text-muted" />}
                     />
+                </div>
 
-                    <Link className="fx_center" to={ROUTES.AUTH.LOGIN}>
-                        <div className="fx_item_center gap-2.5">
-                            <span aria-hidden="true">&lt;</span>
-                            <TextDynamic
-                                color="var(--color-text-muted)"
-                                text={'Back to Log in'}
-                                className={'txt_8125_semi'}
-                            />
-                        </div>
-                    </Link>
+                <div className="mt-6">
+                    <DynamicBtn
+                        loading={isProcessing}
+                        type="submit"
+                        text="Send code"
+                        className="primary_btn"
+                        width="100%"
+                    />
                 </div>
             </AntdForm>
-        </div>
+        </AuthCard>
     );
 }

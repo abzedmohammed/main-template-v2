@@ -1,80 +1,60 @@
-import { Link } from 'react-router-dom';
-import { FormInputPassword, DynamicBtn, TextDynamic, AntdForm } from 'abzed-utils';
+import { Form } from 'antd';
+import { AntdForm, DynamicBtn, FormInputPassword } from 'abzed-utils';
 import { ROUTES } from '../../../routes';
-import { PasswordChecklist } from './';
 import { KeySvg, LockSvg } from '../../../svgs';
+import { confirmPasswordRule, passwordStrengthRule } from '../../../utils';
+import AuthCard from './AuthCard';
+import AuthLink from './AuthLink';
+import PasswordChecklist from './PasswordChecklist';
 
-export default function PasswordFormComponent({
-    form,
-    onFinish,
-    text = 'Submit',
-    showBackBtn = true,
-    headerText,
-    subHeaderText,
-    isProcessing,
-    watchedValues,
-}) {
-    const pswd = watchedValues?.password || '';
+export default function PasswordFormComponent({ form, onFinish, isProcessing }) {
+    const password = Form.useWatch('password', form) || '';
 
     return (
-        <div className="p-3 md:p-0 fx_col gap-[1.88rem] mt-5 md:mt-[5.19rem]">
-            <div className="fx_col text-center gap-6">
-                <TextDynamic
-                    color="#121212"
-                    text={headerText}
-                    className={'txt_1_875_bold'}
+        <AuthCard
+            title="Create a new password"
+            subtitle="Choose a strong password to secure your account."
+            footer={
+                <AuthLink
+                    prompt="Remember your password?"
+                    text="Log in"
+                    to={ROUTES.AUTH.LOGIN}
                 />
-                <TextDynamic
-                    color="#3D3D3D"
-                    text={subHeaderText}
-                    className={'txt_9375'}
-                />
-            </div>
-
-            <AntdForm form={form} handleSubmit={onFinish} formName={'login'}>
+            }
+        >
+            <AntdForm form={form} handleSubmit={onFinish} formName="update-password">
                 <div className="w-full fx_col gap-4">
                     <FormInputPassword
-                        label="Password"
+                        label="New password"
                         inputName="password"
                         inputClassName="primary_input"
                         placeholder="••••••••"
                         prefix={<KeySvg className="text-text-muted" />}
+                        extraRules={[passwordStrengthRule]}
                     />
 
                     <FormInputPassword
-                        label="Confirm Password"
+                        label="Confirm password"
                         inputName="confirmPassword"
                         inputClassName="primary_input"
                         placeholder="••••••••"
                         prefix={<LockSvg className="text-text-muted" />}
+                        extraRules={[confirmPasswordRule]}
                     />
 
-                    <PasswordChecklist password={pswd} />
+                    <PasswordChecklist password={password} />
                 </div>
 
-                <div className="fx_col mt-[1.88rem] gap-[1.88rem]">
+                <div className="mt-6">
                     <DynamicBtn
-                        width={'100%'}
-                        className={'primary_btn'}
-                        text={text}
-                        type="submit"
                         loading={isProcessing}
+                        type="submit"
+                        text="Update password"
+                        className="primary_btn"
+                        width="100%"
                     />
-                    
-                    {showBackBtn && (
-                        <Link className="fx_center" to={ROUTES.AUTH.LOGIN}>
-                            <div className="fx_item_center gap-2.5">
-                                <span aria-hidden="true">&lt;</span>
-                                <TextDynamic
-                                    color="#3D3D3D"
-                                    text={'Back to Log in'}
-                                    className={'txt_8125_semi'}
-                                />
-                            </div>
-                        </Link>
-                    )}
                 </div>
             </AntdForm>
-        </div>
+        </AuthCard>
     );
 }

@@ -1,3 +1,5 @@
+export { default as AuthCard } from './AuthCard';
+export { default as AuthLink } from './AuthLink';
 export { default as LoginFormComponent } from './LoginFormComponent';
 export { default as RegisterFormComponent } from './RegisterFormComponent';
 export { default as ForgotPasswordFormComponent } from './ForgotPasswordFormComponent';

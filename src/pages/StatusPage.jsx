@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { DynamicBtn, TextDynamic } from 'abzed-utils';
-import { ROUTES } from '../routes';
+// From paths, not the routes barrel: the barrel loads the router, which loads this file (cycle).
+import { ROUTES } from '../routes/paths';
 
 // Where "home" is for the current visitor: login when signed out, the dashboard for admins.
 const getHomeTarget = ({ isActive, userRole }) => {

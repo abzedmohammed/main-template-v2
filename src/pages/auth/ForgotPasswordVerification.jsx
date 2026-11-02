@@ -1,22 +1,11 @@
-import { Form } from 'antd';
-import { forgotPasswordVerificationAction } from '../../actions/auth';
 import { Navigate } from 'react-router-dom';
+import { forgotPasswordVerificationAction } from '../../actions/auth';
 import { ROUTES } from '../../routes';
 import { OTPFormComponent } from './components';
-import { useOtpVerificationFlow } from './hooks/useOtpVerificationFlow';
+import { useOtpVerificationFlow } from './hooks';
 
 export default function ForgotPasswordVerification() {
-    const [form] = Form.useForm();
-
-    const {
-        userId,
-        maskedEmail,
-        timer,
-        setOtp,
-        handleResendOtp,
-        handleVerifyOtp,
-        isProcessing,
-    } = useOtpVerificationFlow({
+    const { userId, ...otp } = useOtpVerificationFlow({
         verifyAction: forgotPasswordVerificationAction,
     });
 
@@ -26,14 +15,14 @@ export default function ForgotPasswordVerification() {
 
     return (
         <OTPFormComponent
-            form={form}
-            setOtp={setOtp}
-            onFinish={handleVerifyOtp}
-            isProcessing={isProcessing}
-            handleResendOtp={handleResendOtp}
-            timer={timer}
-            maskedEmail={maskedEmail}
-            title="Verify your identity"
+            title="Reset your password"
+            form={otp.form}
+            setOtp={otp.setOtp}
+            onFinish={otp.handleVerifyOtp}
+            isProcessing={otp.isProcessing}
+            handleResendOtp={otp.handleResendOtp}
+            timer={otp.timer}
+            maskedEmail={otp.maskedEmail}
         />
     );
 }

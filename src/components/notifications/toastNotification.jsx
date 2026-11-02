@@ -38,6 +38,7 @@ const showToast = (tone, rawMessage) => {
             />
         ),
         {
+            // Same tone + message dedupes; a different message gets its own toast.
             id: `${tone}:${message}`,
             duration,
         }

@@ -108,7 +108,9 @@ describe('useFormMutation', () => {
         submit(result, { name: 'Ada' });
 
         await waitFor(() => expect(actionSuccess).toHaveBeenCalled());
-        expect(actionSuccess.mock.calls[0][0]).toMatchObject({ payload: { name: 'Ada' } });
+        expect(actionSuccess.mock.calls[0][0]).toMatchObject({
+            payload: { name: 'Ada' },
+        });
         expect(successToast).not.toHaveBeenCalled();
     });
 
@@ -166,7 +168,9 @@ describe('useFormMutation', () => {
             () =>
                 useFormMutation({
                     action: { mutationFn },
-                    options: { infoWhen: (envelope) => /verify account/i.test(envelope?.message) },
+                    options: {
+                        infoWhen: (envelope) => /verify account/i.test(envelope?.message),
+                    },
                 }),
             { wrapper: createWrapper() }
         );

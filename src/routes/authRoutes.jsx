@@ -1,37 +1,32 @@
-import { HomeLayout } from '../components/layout';
+import { AuthLayout, RouteFallback } from '../components/layout';
 import { ErrorPage } from '../pages';
-import {
-    ForgotPassword,
-    ForgotPasswordVerification,
-    Login,
-    LoginOTPVerification,
-    Register,
-    RegistrationVerification,
-    UpdatePassword,
-} from '../pages/auth';
+import { lazyPage } from './lazyPage';
 import { ROUTES } from './paths';
+
+const authPage = (name) => lazyPage(() => import('../pages/auth'), name);
 
 export const authRoutes = [
     {
-        element: <HomeLayout />,
+        element: <AuthLayout />,
         errorElement: <ErrorPage />,
+        HydrateFallback: RouteFallback,
         children: [
-            { path: ROUTES.AUTH.LOGIN, element: <Login /> },
+            { path: ROUTES.AUTH.LOGIN, lazy: authPage('Login') },
             {
                 path: ROUTES.AUTH.LOGIN_OTP_VERIFICATION,
-                element: <LoginOTPVerification />,
+                lazy: authPage('LoginOTPVerification'),
             },
-            { path: ROUTES.AUTH.REGISTER, element: <Register /> },
-            { path: ROUTES.AUTH.FORGOT_PASSWORD, element: <ForgotPassword /> },
+            { path: ROUTES.AUTH.REGISTER, lazy: authPage('Register') },
+            { path: ROUTES.AUTH.FORGOT_PASSWORD, lazy: authPage('ForgotPassword') },
             {
                 path: ROUTES.AUTH.FORGOT_PASSWORD_VERIFICATION,
-                element: <ForgotPasswordVerification />,
+                lazy: authPage('ForgotPasswordVerification'),
             },
             {
                 path: ROUTES.AUTH.REGISTRATION_VERIFICATION,
-                element: <RegistrationVerification />,
+                lazy: authPage('RegistrationVerification'),
             },
-            { path: ROUTES.AUTH.UPDATE_PASSWORD, element: <UpdatePassword /> },
+            { path: ROUTES.AUTH.UPDATE_PASSWORD, lazy: authPage('UpdatePassword') },
         ],
     },
 ];

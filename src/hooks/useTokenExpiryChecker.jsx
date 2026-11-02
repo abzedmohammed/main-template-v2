@@ -37,14 +37,13 @@ const MODE_IDLE_WARNING = 'idle-warning';
 const MODE_MAX_WARNING = 'max-warning';
 const MODE_EXPIRED = 'expired';
 const MODE_FORCED_401 = 'forced-401';
-const MODE_LOCKED = 'locked';
 
 const toCountdownSeconds = (milliseconds) =>
     Math.max(1, Math.ceil(Number(milliseconds ?? 0) / 1000));
 
 const getExpiredModeTitle = (reason) => {
     if (reason === 'idle-expired') return 'Session timed out';
-    if (reason === 'max-expired') return 'Session ended';
+    if (reason === 'max-expired' || reason === 'absolute-expired') return 'Session ended';
     return 'Session expired';
 };
 
@@ -75,15 +74,6 @@ export function useTokenExpiryChecker() {
         [idleThresholdMs, maxDurationMs, absoluteMaxMs, warningCountdownMs]
     );
 
-    const openLocked = useCallback(() => {
-        setExpiredReason('locked');
-        setCountdown(0);
-        setMode((current) => {
-            if (current === MODE_FORCED_401) return current;
-            return MODE_LOCKED;
-        });
-    }, []);
-
     const forceLogout = useCallback(() => {
         if (isLoggingOutRef.current) {
             return;
@@ -104,7 +94,8 @@ export function useTokenExpiryChecker() {
     const openExpired = useCallback((reason = 'expired') => {
         setExpiredReason(reason);
         setMode((current) => {
-            if (current === MODE_FORCED_401) return current;
+            // Already counting down — the 1s re-check must not restart the countdown.
+            if (current === MODE_FORCED_401 || current === MODE_EXPIRED) return current;
             setCountdown(sessionExpiryCountdownSeconds);
             return MODE_EXPIRED;
         });
@@ -122,14 +113,9 @@ export function useTokenExpiryChecker() {
 
         const status = getClientSessionStatus();
 
+        // Idle, rolling-cap and absolute-cap expiry all end the same way: a
+        // countdown, then logout.
         if (status.state === 'expired') {
-            // The rolling/absolute cap ending shouldn't kick the user out —
-            // instead pause them behind a lock screen until they re-auth
-            // with their transaction PIN. Idle expiry keeps the logout path.
-            if (status.reason === 'max-expired' || status.reason === 'absolute-expired') {
-                openLocked();
-                return;
-            }
             openExpired(status.reason);
             return;
         }
@@ -140,14 +126,12 @@ export function useTokenExpiryChecker() {
             // the session.
             setExpiredReason(status.reason);
             setMode((current) => {
-                if (
-                    current === MODE_FORCED_401 ||
-                    current === MODE_EXPIRED ||
-                    current === MODE_LOCKED
-                ) {
+                if (current === MODE_FORCED_401 || current === MODE_EXPIRED) {
                     return current;
                 }
-                return MODE_IDLE_WARNING;
+                return status.reason === 'max-warning'
+                    ? MODE_MAX_WARNING
+                    : MODE_IDLE_WARNING;
             });
             setCountdown(toCountdownSeconds(status.remainingMs));
             return;
@@ -161,7 +145,7 @@ export function useTokenExpiryChecker() {
             }
             return current;
         });
-    }, [getClientSessionStatus, isActive, openExpired, openLocked]);
+    }, [getClientSessionStatus, isActive, openExpired]);
 
     useEffect(() => {
         if (isActive) {
@@ -311,10 +295,6 @@ export function useTokenExpiryChecker() {
         const status = getClientSessionStatus();
 
         if (status.state === 'expired') {
-            if (status.reason === 'max-expired' || status.reason === 'absolute-expired') {
-                openLocked();
-                return;
-            }
             openExpired(status.reason ?? 'expired');
             return;
         }
@@ -338,7 +318,7 @@ export function useTokenExpiryChecker() {
     const isForced = mode === MODE_FORCED_401;
     const isExpired = mode === MODE_EXPIRED;
     const isMaxWarning = mode === MODE_MAX_WARNING;
-    const canContinue = mode === MODE_IDLE_WARNING;
+    const canContinue = mode === MODE_IDLE_WARNING || mode === MODE_MAX_WARNING;
 
     const title = isForced
         ? 'Session expired'
